@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>UMAI TDH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', 'Cairo', sans-serif;
+            overflow-y: auto;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #question {
+            max-height: 150px;
+        }
+        /* Animation for splash screen text */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-1 { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
+        .fade-in-2 { animation: fadeIn 0.8s 0.3s ease-out forwards; opacity: 0; }
+        .fade-in-3 { animation: fadeIn 0.8s 0.6s ease-out forwards; opacity: 0; }
+        .fade-in-4 { animation: fadeIn 0.8s 0.9s ease-out forwards; opacity: 0; }
+        .fade-in-5 { animation: fadeIn 0.8s 1.2s ease-out forwards; opacity: 0; }
+
+        /* Glowing and bouncing animation for start button */
+        @keyframes bounce-glow {
+            0%, 100% {
+                transform: translateY(0);
+                filter: drop-shadow(0 0 10px rgba(192, 132, 252, 0.6));
+            }
+            50% {
+                transform: translateY(-15%);
+                filter: drop-shadow(0 0 20px rgba(192, 132, 252, 0.9));
+            }
+        }
+        .animate-bounce-glow {
+            animation: bounce-glow 2s infinite ease-in-out;
+        }
+
+        /* small helper animations used in markup */
+        .animate-spin-slow { animation: spin 20s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* --- START: Custom Scrollbar (Gemini Style) --- */
+        #chat-box-container::-webkit-scrollbar {
+            width: 8px; /* عرض شريط التمرير */
+        }
+        #chat-box-container::-webkit-scrollbar-track {
+            background: transparent; /* مسار شفاف */
+        }
+        #chat-box-container::-webkit-scrollbar-thumb {
+            background-color: rgba(136, 136, 136, 0.5); /* لون شريط التمرير */
+            border-radius: 10px; /* حواف دائرية */
+        }
+        #chat-box-container::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(136, 136, 136, 0.8); /* لون الشريط عند التمرير */
+        }
+        /* --- END: Custom Scrollbar --- */
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex flex-col h-screen overflow-hidden">
+
+<audio id="start-sound" src="https://cdn.pixabay.com/audio/2022/08/24/audio_1c1decb1fa.mp3" preload="auto"></audio>
+
+<!-- SPLASH -->
+<div id="splash-screen" class="absolute top-0 left-0 w-full h-full bg-gray-900 flex flex-col items-center justify-center p-8 z-50 transition-opacity duration-700 ease-in-out">
+    <div class="text-center space-y-4 mb-16">
+        <h1 class="text-6xl font-bold text-purple-400 fade-in-1" style="font-family: 'Cairo', sans-serif;">مرحباً</h1>
+        <h2 class="text-5xl font-semibold text-blue-400 fade-in-2">Welcome</h2>
+        <h3 class="text-4xl text-teal-400 fade-in-3">እንቋዕ</h3>
+        <h4 class="text-3xl text-indigo-400 fade-in-4">እንኳን ደህና መጡ</h4>
+    </div>
+    <div class="w-52 h-1 bg-gradient-to-r from-purple-500 via-fuchsia-400 to-blue-500 animate-pulse rounded-full shadow-lg mb-6"></div>
+    <div class="absolute top-2/3 transform -translate-y-1/2 z-0">
+        <div class="w-56 h-56 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-blue-500 blur-3xl opacity-30 animate-spin-slow"></div>
+    </div>
+    <button id="start-chat-btn"
+        onclick="playStartSoundAndShowChat()"
+        class="relative z-10 text-xl font-semibold tracking-wide px-10 py-4 rounded-full bg-gradient-to-r from-purple-600 via-fuchsia-500 to-indigo-600
+        hover:from-purple-700 hover:to-indigo-700 text-white shadow-2xl animate-bounce-glow transition-all duration-700 border border-white/20 overflow-hidden group">
+        <span class="relative z-10 flex items-center gap-3">
+            <i class="fa-solid fa-robot text-white text-2xl"></i>
+            <span>ابدأ مع الذكاء الاصطناعي</span>
+        </span>
+        <div class="absolute inset-0 bg-white opacity-5 blur-2xl group-hover:opacity-20 transition-opacity duration-700"></div>
+    </button>
+</div>
+
+<!-- CHAT -->
+<div id="chat-container" class="chat-container flex-col h-full max-w-4xl mx-auto w-full p-4 hidden opacity-0 transition-opacity duration-500">
+    <header class="flex items-center justify-between p-4 border-b border-gray-700 flex-shrink-0">
+        <div class="flex items-center gap-4">
+            <img src="https://daleel-madani.org/sites/default/files/logos/logo_en_jpg-01.png" alt="TDH Logo" class="w-16 h-auto bg-white p-1 rounded-md" />
+            <div>
+                <h1 id="pageTitle" class="text-xl font-bold">مساعد TDH الذكي</h1>
+                <p class="text-sm text-gray-400">متصل الآن</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+             <div class="language-select relative">
+                <select id="languageSelect" class="form-select bg-gray-800 border border-gray-600 rounded-md py-1 px-2 text-sm appearance-none">
+                    <option value="auto">language-select</option>
+                    <option value="ar-SA" selected>العربية</option>
+                    <option value="en-US">English</option>
+                    <option value="ti-ET">ትግርኛ</option>
+                    <option value="am-ET">አማርኛ</option>
+                </select>
+             </div>
+             <div class="support-buttons relative group">
+                <button class="bg-gray-800 hover:bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+                <div class="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg hidden group-focus-within:block group-hover:block z-10">
+                    <a id="emailButton" href="mailto:support@example.com" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <i class="fa-solid fa-envelope w-4"></i>
+                        <span>البريد الإلكتروني</span>
+                    </a>
+                    <a id="callButton" href="tel:+201234567890" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <i class="fa-solid fa-phone w-4"></i>
+                        <span>الاتصال</span>
+                    </a>
+                    <a id="websiteButton" href="https://example.com" target="_blank" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <i class="fa-solid fa-globe w-4"></i>
+                        <span>زيارة الموقع</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="relative flex-grow p-4 overflow-y-auto" id="chat-box-container">
+        <div id="chat-box" class="flex flex-col gap-4">
+             <div class="message bot flex justify-start mb-4">
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl rounded-bl-lg p-4 max-w-lg">
+                    <p class="text-white">أهلاً بك! أنا مساعد TDH الذكي. كيف يمكنني مساعدتك اليوم؟</p>
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="readText(this.parentElement.previousElementSibling)" title="قراءة" class="read-btn w-7 h-7 flex items-center justify-center rounded-full bg-purple-700 hover:bg-purple-800 text-white text-xs shadow-md">
+                            <i class="fa-solid fa-volume-up"></i>
+                        </button>
+                        <button onclick="stopReading()" title="إيقاف" class="stop-btn w-7 h-7 flex items-center justify-center rounded-full bg-red-700 hover:bg-red-800 text-white text-xs shadow-md">
+                            <i class="fa-solid fa-stop"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-area mt-4 p-2 bg-gray-800 rounded-full flex items-center gap-2 border border-gray-700 shadow-lg flex-shrink-0">
+        <textarea id="question" placeholder="اكتب سؤالك..." rows="1" class="flex-grow bg-transparent border-none resize-none outline-none p-2 text-white placeholder-gray-400 scrollbar-hide"></textarea>
+        <button id="micButton" onclick="startSpeechRecognition()" title="تحدث" class="w-10 h-10 flex-shrink-0 rounded-full bg-purple-600 hover:bg-purple-700 flex items-center justify-center transition-colors">
+            <i class="fa-solid fa-microphone"></i>
+        </button>
+        <button id="sendButton" onclick="sendQuestion()" title="إرسال" class="w-10 h-10 flex-shrink-0 rounded-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center transition-colors">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    const splashScreen = document.getElementById('splash-screen');
+    const startChatBtn = document.getElementById('start-chat-btn');
+    const chatContainer = document.getElementById('chat-container');
+    const questionInput = document.getElementById("question");
+    const chatBox = document.getElementById("chat-box");
+    const chatBoxContainer = document.getElementById("chat-box-container");
+    const languageSelect = document.getElementById("languageSelect");
+    let currentUtterance = null;
+
+    const translations = {
+        "ar-SA": {
+            pageTitle: "مساعد TDH الذكي", placeholder: "اكتب سؤالك...",
+            micButtonTitle: "تحدث", sendButtonTitle: "إرسال", emailButton: "البريد الإلكتروني",
+            callButton: "الاتصال", websiteButton: "زيارة الموقع", readBtn: "قراءة", stopBtn: "إيقاف",
+            processing: "جاري المعالجة...", error: "حدث خطأ أثناء الاتصال بالخادم.",
+            welcomeMsg: "أهلاً بك! أنا مساعد TDH الذكي. كيف يمكنني مساعدتك اليوم؟"
+        },
+        "en-US": {
+            pageTitle: "TDH Smart Assistant", placeholder: "Type your question...",
+            micButtonTitle: "Speak", sendButtonTitle: "Send", emailButton: "Email",
+            callButton: "Call", websiteButton: "Visit Website", readBtn: "Read", stopBtn: "Stop",
+            processing: "Processing...", error: "An error occurred while contacting the server.",
+            welcomeMsg: "Welcome! I am the TDH Smart Assistant. How can I help you today?"
+        },
+        "ti-ET": {
+            pageTitle: "TDH ስማርት ረዳት", placeholder: "ሕቶኻ ጸሓፍ...",
+            micButtonTitle: "ተዛረብ", sendButtonTitle: "ስደድ", emailButton: "ኢሜይል",
+            callButton: "ደውል", websiteButton: "ዌብሳይት ምብጻሕ", readBtn: "ኣንብብ", stopBtn: "ኣቋርጽ",
+            processing: "ይስራሕ ኣሎ...", error: "ሰርቨር ኣብ ምውካስ ጌጋ ኣጋጢሙ።",
+            welcomeMsg: "እንቋዕ! ኣነ TDH ስማርት ረዳት እየ። ከመይ ክሕግዘካ ይኽእል፧"
+        },
+        "am-ET": {
+            pageTitle: "የTDH ስማርት ረዳት", placeholder: "ጥያቄዎን ይተይቡ...",
+            micButtonTitle: "ተናገር", sendButtonTitle: "ላክ", emailButton: "ኢሜል",
+            callButton: "ደውል", websiteButton: "ድር ጣቢያ ይጎብኙ", readBtn: "አንብብ", stopBtn: "አቁም",
+            processing: "በሂደት ላይ ነው...", error: "አገልጋዩን ሲያነጋግር ስህተት ተፈጥሯል።",
+            welcomeMsg: "እንኳን ደህና መጡ! እኔ የTDH ስማርት ረዳት ነኝ። ዛሬ እንዴት ልረዳዎት እችላለሁ?"
+        },
+    };
+
+    function changeLanguage(langCode) {
+        const effectiveLang = (langCode === "auto" || !translations[langCode]) ? "ar-SA" : langCode;
+        document.documentElement.lang = effectiveLang.split('-')[0];
+        document.documentElement.dir = ["ar-SA", "ti-ET", "am-ET"].includes(effectiveLang) ? "rtl" : "ltr";
+
+        const t = translations[effectiveLang];
+
+        document.title = t.pageTitle;
+        if (document.getElementById("pageTitle")) {
+            document.getElementById("pageTitle").textContent = t.pageTitle;
+            questionInput.placeholder = t.placeholder;
+            document.getElementById("micButton").title = t.micButtonTitle;
+            document.getElementById("sendButton").title = t.sendButtonTitle;
+            document.querySelector("#emailButton span").textContent = t.emailButton;
+            document.querySelector("#callButton span").textContent = t.callButton;
+            document.querySelector("#websiteButton span").textContent = t.websiteButton;
+            
+            const welcomeMessageElement = chatBox.querySelector('.message.bot p');
+            if (welcomeMessageElement) {
+                welcomeMessageElement.textContent = t.welcomeMsg;
+            }
+
+            document.querySelectorAll('.read-btn').forEach(btn => btn.title = t.readBtn);
+            document.querySelectorAll('.stop-btn').forEach(btn => btn.title = t.stopBtn);
+        }
+    }
+
+    // show chat when splash start clicked (animation handled here)
+    function showChatContainer() {
+        splashScreen.classList.add('opacity-0');
+        setTimeout(() => {
+            splashScreen.style.display = 'none';
+            chatContainer.classList.remove('hidden', 'opacity-0');
+            chatContainer.classList.add('flex');
+        }, 700);
+    }
+
+    // play sound then show
+    function playStartSoundAndShowChat() {
+        const startSound = document.getElementById("start-sound");
+        startSound.play().catch(() => {});
+        showChatContainer();
+    }
+
+    // also allow clicking the button via event listener (redundant but safe)
+    startChatBtn.addEventListener('click', () => {
+        // nothing here because onclick already calls playStartSoundAndShowChat
+        // but leave for safety if user triggers via keyboard or other event
+        // (no loop/call to startChatBtn.click() to avoid recursion)
+    });
+
+    languageSelect.addEventListener("change", (e) => changeLanguage(e.target.value));
+    window.addEventListener("DOMContentLoaded", () => changeLanguage(languageSelect.value));
+
+    questionInput.addEventListener("input", () => {
+        questionInput.style.height = "auto";
+        questionInput.style.height = (questionInput.scrollHeight) + "px";
+    });
+
+    questionInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            sendQuestion();
+        }
+    });
+
+    async function sendQuestion() {
+        const question = questionInput.value.trim();
+        if (!question) return;
+
+        appendMessage("user", question);
+        questionInput.value = "";
+        questionInput.style.height = "auto";
+        
+        const langKey = (languageSelect.value === "auto") ? "ar-SA" : languageSelect.value;
+        const tempBotMessage = appendMessage("bot", "...");
+
+        try {
+            // هنا تُرسل الطلب للخادم. في بيئتك المحلية قد تحتاج لتعديل المسار.
+            const response = await fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question })
+            });
+            if (!response.ok) throw new Error("Network response was not ok.");
+            const data = await response.json();
+            updateLastBotMessage(data.answer || "(لا يوجد رد من الخادم)", tempBotMessage);
+        } catch (e) {
+            const errorText = (translations[langKey] || translations['en-US']).error;
+            updateLastBotMessage(errorText, tempBotMessage);
+        }
+    }
+    
+    function appendMessage(sender, message) {
+        const msgContainer = document.createElement("div");
+        msgContainer.className = `message flex mb-4 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+        
+        const messageWrapper = document.createElement("div");
+
+        if (sender === 'user') {
+            messageWrapper.className = "bg-blue-600 text-white rounded-2xl rounded-br-lg p-4 max-w-lg shadow-md";
+            messageWrapper.textContent = message;
+        } else {
+            messageWrapper.className = "bg-gray-700 text-white rounded-2xl rounded-bl-lg p-4 max-w-lg shadow-md";
+            if (message === "...") {
+                messageWrapper.innerHTML = `<div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                    <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style="animation-delay:75ms"></div>
+                    <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style="animation-delay:150ms"></div>
+                </div>`;
+            } else {
+                const textP = document.createElement('p');
+                textP.className = 'text-white';
+                textP.textContent = message;
+
+                const buttonsContainer = document.createElement('div');
+                buttonsContainer.className = 'flex gap-2 mt-2';
+
+                const langKey = (languageSelect.value === "auto") ? "ar-SA" : languageSelect.value;
+                const readTitle = translations[langKey] ? translations[langKey].readBtn : 'Read';
+                const stopTitle = translations[langKey] ? translations[langKey].stopBtn : 'Stop';
+
+                buttonsContainer.innerHTML = `
+                    <button onclick="readText(this.parentElement.previousElementSibling)" title="${readTitle}" class="read-btn w-7 h-7 flex items-center justify-center rounded-full bg-purple-700 hover:bg-purple-800 text-white text-xs shadow-md">
+                        <i class="fa-solid fa-volume-up"></i>
+                    </button>
+                    <button onclick="stopReading()" title="${stopTitle}" class="stop-btn w-7 h-7 flex items-center justify-center rounded-full bg-red-700 hover:bg-red-800 text-white text-xs shadow-md">
+                        <i class="fa-solid fa-stop"></i>
+                    </button>
+                `;
+
+                messageWrapper.appendChild(textP);
+                messageWrapper.appendChild(buttonsContainer);
+            }
+        }
+        
+        msgContainer.appendChild(messageWrapper);
+        chatBox.appendChild(msgContainer);
+        // scroll to bottom
+        chatBoxContainer.scrollTo({ top: chatBoxContainer.scrollHeight, behavior: "smooth" });
+        return msgContainer;
+    }
+
+    function updateLastBotMessage(newText, messageElement) {
+        if (!messageElement) return;
+        // messageElement is the container returned by appendMessage
+        const messageWrapper = messageElement.querySelector("div");
+        if (!messageWrapper) return;
+        messageWrapper.innerHTML = ''; // Clear loading animation
+
+        const textP = document.createElement('p');
+        textP.className = 'text-white';
+        textP.textContent = newText;
+
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.className = 'flex gap-2 mt-2';
+
+        const langKey = (languageSelect.value === "auto") ? "ar-SA" : languageSelect.value;
+        const readTitle = translations[langKey] ? translations[langKey].readBtn : 'Read';
+        const stopTitle = translations[langKey] ? translations[langKey].stopBtn : 'Stop';
+
+        buttonsContainer.innerHTML = `
+            <button onclick="readText(this.parentElement.previousElementSibling)" title="${readTitle}" class="read-btn w-7 h-7 flex items-center justify-center rounded-full bg-purple-700 hover:bg-purple-800 text-white text-xs shadow-md">
+                <i class="fa-solid fa-volume-up"></i>
+            </button>
+            <button onclick="stopReading()" title="${stopTitle}" class="stop-btn w-7 h-7 flex items-center justify-center rounded-full bg-red-700 hover:bg-red-800 text-white text-xs shadow-md">
+                <i class="fa-solid fa-stop"></i>
+            </button>
+        `;
+
+        messageWrapper.appendChild(textP);
+        messageWrapper.appendChild(buttonsContainer);
+
+        chatBoxContainer.scrollTo({ top: chatBoxContainer.scrollHeight, behavior: "smooth" });
+    }
+
+    // قراءة النص صوتياً
+    function readText(elementToRead) {
+        if (currentUtterance) {
+            window.speechSynthesis.cancel();
+            currentUtterance = null;
+        }
+        if (!elementToRead) return;
+
+        const text = elementToRead.innerText;
+        const utterance = new SpeechSynthesisUtterance(text);
+        currentUtterance = utterance;
+
+        const langKey = (languageSelect.value === "auto") ? "ar-SA" : languageSelect.value;
+        utterance.lang = langKey;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function stopReading() {
+        if (currentUtterance) {
+            window.speechSynthesis.cancel();
+            currentUtterance = null;
+        }
+    }
+
+    // التعرف على الصوت
+    let recognition = null;
+    function startSpeechRecognition() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            alert('متصفحك لا يدعم التعرف على الصوت');
+            return;
+        }
+        if (recognition) {
+            recognition.stop();
+            recognition = null;
+            return;
+        }
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = (languageSelect.value === "auto") ? "ar-SA" : languageSelect.value;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        recognition.start();
+        recognition.onresult = (event) => {
+            if (event.results.length > 0) {
+                questionInput.value = event.results[0][0].transcript;
+                questionInput.focus();
+            }
+        };
+        recognition.onerror = (event) => { console.error("Speech recognition error", event.error); };
+        recognition.onend = () => { recognition = null; };
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>تسجيل الدخول</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            color: #fff;
+            /* خلفية بتدرج لوني متحرك */
+            background: linear-gradient(135deg, #0f172a, #1e3a8a, #0f172a, #3b0764);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-sm mx-auto bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 shadow-2xl">
+        <h2 class="text-3xl font-bold text-center mb-6 text-gray-100">تسجيل الدخول</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="mb-4 space-y-2">
+                    {% for category, message in messages %}
+                        <li class="bg-yellow-900/40 border border-yellow-700 text-yellow-300 p-3 rounded-md">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('login') }}" method="POST" class="space-y-4">
+            <input name="username" type="text" placeholder="اسم المستخدم" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300" required>
+            <input name="password" type="password" placeholder="كلمة المرور" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300" required>
+            
+            <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-300 transform hover:scale-105">دخول</button>
+        </form>
+        
+        <div class="text-center mt-6">
+            <a href="{{ url_for('register') }}" class="text-blue-400 hover:text-blue-300 font-medium transition duration-300">
+                ليس لديك حساب؟ <span class="underline">إنشاء حساب</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
