@@ -2,215 +2,411 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <title>مراكز TDH</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مراكز TDH</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
     <style>
+        :root {
+            --font-main: 'Cairo', sans-serif;
+            --font-alt: 'Amiri', serif;
+        }
+
         body {
-            font-family: 'Inter', 'Cairo', sans-serif;
+            font-family: var(--font-main);
+            min-height: 100vh;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            background-size: 400% 400%;
+            animation: bgMove 20s ease infinite;
+        }
+
+        body.dark {
+            background: linear-gradient(-45deg, #0a1128, #1a2a51, #0a1128, #1a2a51);
+            color: #e0e6f0;
+        }
+
+        body.light {
+            background: linear-gradient(-45deg, #f3f4f6, #e5e7eb, #f3f4f6, #e5e7eb);
+            color: #1f2937;
+        }
+
+        @keyframes bgMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        body.light .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .center-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .center-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        body.light .center-card {
+            background: #ffffff;
+            backdrop-filter: none;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        body.light .center-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light .text-gray-200 { color: #4b5563; }
+        body.light .text-gray-400 { color: #6b7280; }
+        body.light .text-white { color: #1f2937 !important; }
+        body.light .navbar a { color: #4b5563; }
+        body.light .navbar a:hover { color: #111827; }
+        body.light .logout-btn { 
+            color: #1f2937;
+            border-color: #6b7280;
+        }
+        body.light .logout-btn:hover { 
+            background-color: #1f2937;
+            color: #fff;
+        }
+        body.light .navbar select { 
+            color: #1f2937;
+            border-color: #6b7280;
+            background-color: transparent;
+        }
+        body.light .navbar select:hover {
+            background-color: #1f2937;
+            color: #fff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 42px;
+            height: 22px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #555;
+            transition: 0.4s;
+            border-radius: 9999px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
+        input:checked + .slider {
+            background-color: #38a169;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        body.dark .slider:before { content: "\f186"; font-size: 10px; color: #555; }
+        body.light .slider:before { content: "\f185"; font-size: 10px; color: #38a169; }
+        
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid;
+            border-color: #d1d5db;
+            transition: border-color 0.3s ease;
+        }
+        body.light .profile-img {
+            border-color: #4b5563;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white flex flex-col min-h-screen">
+<body class="dark flex flex-col min-h-screen">
 
-    <header class="flex items-center justify-between p-4 border-b border-gray-700 flex-shrink-0">
-        <a href="{{ url_for('index') }}" class="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800 transition-colors">
-            <img src="https://daleel-madani.org/sites/default/files/logos/logo_en_jpg-01.png" alt="TDH Logo" class="w-10 h-auto" />
-            <span class="text-xl font-bold">TDH</span>
+<nav class="navbar p-4 flex justify-between items-center shadow-md flex-wrap gap-3 sticky top-0 z-50">
+    <div class="flex items-center">
+        <a href="{{ url_for('index') }}" class="flex items-center gap-2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Terre_des_hommes_logo.svg/2560px-Terre_des_hommes_logo.svg.png" alt="شعار TDH" class="h-10" />
+            <span class="text-white font-bold text-2xl select-none hidden md:block">TDH</span>
         </a>
-        <h1 class="text-2xl font-bold">مراكز TDH</h1>
-        <div></div>
-    </header>
+    </div>
 
-    <main class="container mx-auto p-8 flex-grow">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                <div class="p-4">
-                    <h2 class="text-xl font-bold mb-2">مركز شباب حلمية الزيتون</h2>
-                    <p class="text-gray-400 mb-4">مركز شباب يقع في منطقة حلمية الزيتون.</p>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">رقم التواصل</h3>
-                        </div>
-                        <p class="text-gray-300 text-sm">01000121830</p>
-                    </div>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">مواعيد العمل</h3>
-                        </div>
-                        <ul class="text-gray-300 text-sm space-y-1">
-                            <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
-                            <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
-                            <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="w-full h-64 bg-gray-700">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3451.3185909952927!2d31.320266025836872!3d30.113695815288754!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145815984ffb1871%3A0x18bf8bfd8dec2e12!2z2YXYsdmD2LIg2LTYqNin2Kgg2K3ZhNmF2YrYqSDYp9mE2LLZitiq2YjZhg!5e0!3m2!1sar!2seg!4v1754928834347!5m2!1sar!2seg"
-                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </div>
-
-            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                <div class="p-4">
-                    <h2 class="text-xl font-bold mb-2">مركز شباب المعادي الجديد</h2>
-                    <p class="text-gray-400 mb-4">مركز شباب في منطقة المعادي الجديدة.</p>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">رقم التواصل</h3>
-                        </div>
-                        <p class="text-gray-300 text-sm">27041405</p>
-                    </div>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">مواعيد العمل</h3>
-                        </div>
-                        <ul class="text-gray-300 text-sm space-y-1">
-                            <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
-                            <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
-                            <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="w-full h-64 bg-gray-700">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d55292.53050101716!2d31.40070676803589!3d29.985661254390852!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145839146f419b19%3A0xafab12ae1728c607!2z2YXYsdmD2LIg2LTYqNin2Kgg2KfZhNmF2LnYp9iv2Yog2KfZhNis2K_Zitiv2Yc!5e0!3m2!1sar!2seg!4v1754928809197!5m2!1sar!2seg"
-                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </div>
-
-            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                <div class="p-4">
-                    <h2 class="text-xl font-bold mb-2">النادي الأولمبي</h2>
-                    <p class="text-gray-400 mb-4">نادي رياضي يقدم خدمات متعددة.</p>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">رقم التواصل</h3>
-                        </div>
-                        <p class="text-gray-300 text-sm">61251042</p>
-                    </div>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">مواعيد العمل</h3>
-                        </div>
-                        <ul class="text-gray-300 text-sm space-y-1">
-                            <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
-                            <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
-                            <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="w-full h-64 bg-gray-700">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d55292.53050101716!2d31.40070676803589!3d29.985661254390852!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583871184fe9f7%3A0xdd5445f17efd4060!2z2KfZhNmF2LHZg9iyINin2YTYo9mI2YTZitmF2KjZiiDZhNmE2YHYsdmCINin2YTZgtmI2YXZitipINio2KfZhNmF2LnYp9iv2Ykg2KfZhNis2K_Zitiv2Kk!5e0!3m2!1sar!2seg!4v1754928768935!5m2!1sar!2seg"
-                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </div>
-
-            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                <div class="p-4">
-                    <h2 class="text-xl font-bold mb-2">مركز شباب الفيصل</h2>
-                    <p class="text-gray-400 mb-4">مركز شباب يقع في منطقة الفيصل.</p>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">رقم التواصل</h3>
-                        </div>
-                        <p class="text-gray-300 text-sm">35846926</p>
-                    </div>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">مواعيد العمل</h3>
-                        </div>
-                        <ul class="text-gray-300 text-sm space-y-1">
-                            <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
-                            <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
-                            <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="w-full h-64 bg-gray-700">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.4937127680973!2d31.15452352584259!3d29.99397692096267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145845c1c6e1df5d%3A0x491a9bbbc9dac0cb!2z2YXYsdmD2LIg2LTYqNin2Kgg2KfZhNmD2YjZhSDYp9mE2KfYrti22LE!5e0!3m2!1sar!2seg!4v1754928691311!5m2!1sar!2seg"
-                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </div>
-
-            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                <div class="p-4">
-                    <h2 class="text-xl font-bold mb-2">مركز شباب 6 أكتوبر</h2>
-                    <p class="text-gray-400 mb-4">مركز شباب في مدينة 6 أكتوبر.</p>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">رقم التواصل</h3>
-                        </div>
-                        <p class="text-gray-300 text-sm">38334663</p>
-                    </div>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">مواعيد العمل</h3>
-                        </div>
-                        <ul class="text-gray-300 text-sm space-y-1">
-                            <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
-                            <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
-                            <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="w-full h-64 bg-gray-700">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27654.88576611953!2d30.927401119696196!3d29.954684593914994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14585602b049045d%3A0x79ba8bfbb72bc79b!2z2YXZhtiq2K_ZiSDYtNio2KfYqCA2INij2YPYqtmI2KjYsQ!5e0!3m2!1sar!2seg!4v1754928657902!5m2!1sar!2seg"
-                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </div>
-
-            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                <div class="p-4">
-                    <h2 class="text-xl font-bold mb-2">مركز شباب العاشر من رمضان</h2>
-                    <p class="text-gray-400 mb-4">مركز شباب في مدينة العاشر من رمضان.</p>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">رقم التواصل</h3>
-                        </div>
-                        <p class="text-gray-300 text-sm">7062301</p>
-                    </div>
-                    <div class="mt-4 border-t border-gray-700 pt-4">
-                        <div class="flex items-center mb-2">
-                            <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
-                            <h3 class="font-semibold text-lg">مواعيد العمل</h3>
-                        </div>
-                        <ul class="text-gray-300 text-sm space-y-1">
-                            <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
-                            <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
-                            <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="w-full h-64 bg-gray-700">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3444.9261337601138!2d31.733368725828182!3d30.29616440660296!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1457fde7b80521ef%3A0x2118d16721dff60b!2z2YXYsdmD2LIg2LTYqNin2Kgg2KfZhNi52KfYtNixINmF2YYg2LHZhdi22KfZhg!5e0!3m2!1sar!2seg!4v1754928413283!5m2!1sar!2seg"
-                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </div>
-
+    <div class="flex-grow max-w-sm mx-4">
         </div>
-    </main>
+    
+    <div class="flex items-center gap-4 flex-wrap">
+        <a href="mailto:support@tdh.org" title="البريد الإلكتروني" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-envelope fa-lg"></i></a>
+        <a href="https://www.tdh.org" target="_blank" title="الموقع الرسمي" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-globe fa-lg"></i></a>
+        <a href="tel:+201234567890" title="خدمة العملاء" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-phone fa-lg"></i></a>
 
+        <a href="{{ url_for('centers') }}" class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">المراكز</a>
+        <a href="{{ url_for('my_profile') }}" class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">الملف الشخصي</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">خروج</a>
+
+        <select id="languageSelector" aria-label="اختيار اللغة" title="اختيار اللغة" class="bg-transparent border-2 border-white text-white rounded-full p-2 text-sm cursor-pointer transition-colors hover:bg-white hover:text-gray-900">
+            <option value="ar" class="bg-gray-800 text-white" selected>العربية</option>
+            <option value="en" class="bg-gray-800 text-white">English</option>
+            <option value="ti" class="bg-gray-800 text-white">ትግርኛ</option>
+            <option value="am" class="bg-gray-800 text-white">አማርኛ</option>
+            <option value="de" class="bg-gray-800 text-white">Deutsch</option>
+        </select>
+
+        <label class="switch" title="تبديل الوضع">
+            <input type="checkbox" id="themeToggle" />
+            <span class="slider"></span>
+        </label>
+    </div>
+</nav>
+
+<main class="container mx-auto p-8 flex-grow">
+    <h1 class="text-center text-4xl font-extrabold mb-8">مراكز TDH</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <div class="center-card rounded-lg shadow-lg overflow-hidden">
+            <div class="p-4">
+                <h2 class="text-xl font-bold mb-2">مركز شباب حلمية الزيتون</h2>
+                <p class="text-gray-400 mb-4">مركز شباب يقع في منطقة حلمية الزيتون.</p>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">رقم التواصل</h3>
+                    </div>
+                    <p class="text-gray-300 text-sm">01000121830</p>
+                </div>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">مواعيد العمل</h3>
+                    </div>
+                    <ul class="text-gray-300 text-sm space-y-1">
+                        <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
+                        <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
+                        <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="w-full h-64 bg-gray-700">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3452.4172089408665!2d31.31293341505372!3d30.083246881872133!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583e742e88a033%3A0x7d6c66e921d723b7!2z2KzYp9mF2Ycg2KfZhNiz2YrYsdinINmE2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2KzYp9mF2Ycg2KfZhNiz2YrYsdin!5e0!3m2!1sar!2seg!4v1625290611746!5m2!1sar!2seg"
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="center-card rounded-lg shadow-lg overflow-hidden">
+            <div class="p-4">
+                <h2 class="text-xl font-bold mb-2">مركز شباب المعادي الجديد</h2>
+                <p class="text-gray-400 mb-4">مركز شباب في منطقة المعادي الجديدة.</p>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">رقم التواصل</h3>
+                    </div>
+                    <p class="text-gray-300 text-sm">27041405</p>
+                </div>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">مواعيد العمل</h3>
+                    </div>
+                    <ul class="text-gray-300 text-sm space-y-1">
+                        <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
+                        <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
+                        <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="w-full h-64 bg-gray-700">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.518608933256!2d31.25893141505193!3d30.00762958189675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1458474d2b2c938d%3A0x8f2d592f6f5d84d7!2z2KzYp9mF2Ycg2KfZhNiz2YrYsdinINmE2YTZhdmG2KfZhNmIINmE2K_Zhtip2Iwg2KzYp9mF2Ycg2KfZhNiz2YrYsdinINmE2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2KzYp9mF2Ycg2KfZhNiz2YrYsdin!5e0!3m2!1sar!2seg!4v1625290611746!5m2!1sar!2seg" 
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="center-card rounded-lg shadow-lg overflow-hidden">
+            <div class="p-4">
+                <h2 class="text-xl font-bold mb-2">النادي الأولمبي</h2>
+                <p class="text-gray-400 mb-4">نادي رياضي يقدم خدمات متعددة.</p>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">رقم التواصل</h3>
+                    </div>
+                    <p class="text-gray-300 text-sm">61251042</p>
+                </div>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">مواعيد العمل</h3>
+                    </div>
+                    <ul class="text-gray-300 text-sm space-y-1">
+                        <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
+                        <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
+                        <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="w-full h-64 bg-gray-700">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.518608933256!2d31.25893141505193!3d30.00762958189675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1458474d2b2c938d%3A0x8f2d592f6f5d84d7!2z2KzYp9mF2Ycg2KfZhNiz2YrYsdinINmE2YTZhdmG2KfZhNmIINmE2K_Zhtip2Iwg2KzYp9mF2Ycg2KfZhNiz2YrYsdinINmE2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2KzYp9mF2Ycg2KfZhNiz2YrYsdin!5e0!3m2!1sar!2seg!4v1625290611746!5m2!1sar!2seg"
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="center-card rounded-lg shadow-lg overflow-hidden">
+            <div class="p-4">
+                <h2 class="text-xl font-bold mb-2">مركز شباب الفيصل</h2>
+                <p class="text-gray-400 mb-4">مركز شباب يقع في منطقة الفيصل.</p>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">رقم التواصل</h3>
+                    </div>
+                    <p class="text-gray-300 text-sm">35846926</p>
+                </div>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">مواعيد العمل</h3>
+                    </div>
+                    <ul class="text-gray-300 text-sm space-y-1">
+                        <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
+                        <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
+                        <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="w-full h-64 bg-gray-700">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.518608933256!2d31.25893141505193!3d30.00762958189675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1458474d2b2c938d%3A0x8f2d592f6f5d84d7!2z2KzYp9mF2Ycg2KfZhNiz2YrYsdinINmE2YTZhdmG2KfZhNmIINmE2K_Zhtip2Iwg2KzYp9mF2Ycg2KfZhNiz2YrYsdinINmE2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2KzYp9mF2Ycg2KfZhNiz2YrYsdin!5e0!3m2!1sar!2seg!4v1625290611746!5m2!1sar!2seg"
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="center-card rounded-lg shadow-lg overflow-hidden">
+            <div class="p-4">
+                <h2 class="text-xl font-bold mb-2">مركز شباب 6 أكتوبر</h2>
+                <p class="text-gray-400 mb-4">مركز شباب في مدينة 6 أكتوبر.</p>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">رقم التواصل</h3>
+                    </div>
+                    <p class="text-gray-300 text-sm">38334663</p>
+                </div>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">مواعيد العمل</h3>
+                    </div>
+                    <ul class="text-gray-300 text-sm space-y-1">
+                        <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
+                        <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
+                        <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="w-full h-64 bg-gray-700">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.518608933256!2d31.25893141505193!3d30.00762958189675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1458474d2b2c938d%3A0x8f2d592f6f5d84d7!2z2KzYp9mF2Ycg2KfZhNiz2YrYsdinINmE2YTZhdmG2KfZhNmIINmE2K_Zhtip2Iwg2KzYp9mF2Ycg2KfZhNiz2YrYsdinINmE2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2KzYp9mF2Ycg2KfZhNiz2YrYsdin!5e0!3m2!1sar!2seg!4v1625290611746!5m2!1sar!2seg"
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="center-card rounded-lg shadow-lg overflow-hidden">
+            <div class="p-4">
+                <h2 class="text-xl font-bold mb-2">مركز شباب العاشر من رمضان</h2>
+                <p class="text-gray-400 mb-4">مركز شباب في مدينة العاشر من رمضان.</p>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-phone text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">رقم التواصل</h3>
+                    </div>
+                    <p class="text-gray-300 text-sm">7062301</p>
+                </div>
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fa-solid fa-clock text-purple-400 ml-2"></i>
+                        <h3 class="font-semibold text-lg">مواعيد العمل</h3>
+                    </div>
+                    <ul class="text-gray-300 text-sm space-y-1">
+                        <li><span class="font-medium text-purple-200">الأحد - الثلاثاء:</span> 10 صباحًا - 3 مساءً</li>
+                        <li><span class="font-medium text-purple-200">الأربعاء - الخميس:</span> 1 مساءً - 8 مساءً</li>
+                        <li><span class="font-medium text-red-400">الجمعة - السبت:</span> مغلق</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="w-full h-64 bg-gray-700">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.518608933256!2d31.25893141505193!3d30.00762958189675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1458474d2b2c938d%3A0x8f2d592f6f5d84d7!2z2KzYp9mF2Ycg2KfZhNiz2YrYsdinINmE2YTZhdmG2KfZhNmIINmE2K_Zhtip2Iwg2KzYp9mF2Ycg2KfZhNiz2YrYsdinINmE2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2YjYp9iz2Ycg2YjYp9mF2K_Zhtip2Iwg2KzYp9mF2Ycg2KfZhNiz2YrYsdin!5e0!3m2!1sar!2seg!4v1625290611746!5m2!1sar!2seg"
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+
+    </div>
+</main>
+<script>
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    // Check for saved theme in localStorage on page load
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        body.classList.add(savedTheme);
+        if (savedTheme === 'light') {
+            themeToggle.checked = true;
+        }
+    } else {
+        // Default to dark theme
+        body.classList.add('dark');
+    }
+
+    // Toggle theme on button click
+    themeToggle.addEventListener('change', () => {
+        if (body.classList.contains('dark')) {
+            body.classList.remove('dark');
+            body.classList.add('light');
+            localStorage.setItem('theme', 'light');
+        } else {
+            body.classList.remove('light');
+            body.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+
+    // You can also add the language selector logic here if needed
+</script>
 </body>
 </html>
