@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي لـ {{ user.username }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        .profile-page {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .profile-info {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .profile-pic-large {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .profile-username {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+        .profile-course {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        .user-posts h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        /* تنسيق المنشورات */
+        .post {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        .post-user-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .post-username {
+            font-weight: bold;
+        }
+        .post-content {
+            line-height: 1.6;
+        }
+        .like-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        .like-btn i {
+            margin-right: 5px;
+        }
+        .liked i {
+            color: #007bff; /* لون مميز للإعجاب */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="{{ url_for('index') }}" class="logo">TDH</a>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">الرئيسية</a></li>
+                <li><a href="{{ url_for('ask_tdh_ai') }}">اسأل الذكاء الاصطناعي</a></li>
+                <li><a href="{{ url_for('centers') }}">مراكزنا</a></li>
+                {% if session.get('username') %}
+                <li><a href="{{ url_for('my_profile') }}" class="profile-link">
+                    <img src="{{ url_for('static', filename='profile_pics/' + user.profile_picture) }}" alt="صورة الملف الشخصي" class="profile-pic-small">
+                    {{ session.get('username') }}
+                </a></li>
+                <li><a href="{{ url_for('logout') }}">تسجيل خروج</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main class="profile-page">
+        <section class="profile-info">
+            <img src="{{ user.profile_pic_url }}" alt="صورة الملف الشخصي" class="profile-pic-large">
+            <h1 class="profile-username">{{ user.username }}</h1>
+            <p class="profile-course">
+                <i class="fas fa-graduation-cap"></i>
+                {% if user.training_course %}
+                    {{ user.training_course }}
+                {% else %}
+                    لم يحدد دورة تدريبية بعد
+                {% endif %}
+            </p>
+        </section>
+
+        <section class="user-posts">
+            <h2>منشورات {{ user.username }}</h2>
+            <div class="posts-list">
+                {% if user_posts %}
+                    {% for post in user_posts %}
+                        <article class="post">
+                            <div class="post-header">
+                                <a href="{{ url_for('user_profile', user_id=post.user.id) }}">
+                                    <img src="{{ post.user.profile_pic_url }}" alt="صورة المستخدم" class="post-user-pic">
+                                    <span class="post-username">{{ post.user.username }}</span>
+                                </a>
+                                <span class="post-time">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+                            </div>
+                            <p class="post-content">{{ post.content }}</p>
+                            <div class="post-actions">
+                                <button class="like-btn {% if post.liked_by_user %}liked{% endif %}" data-post-id="{{ post.id }}">
+                                    <i class="far fa-thumbs-up"></i>
+                                    <span class="likes-count">{{ post.likes }}</span>
+                                </button>
+                                </div>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-posts">لم ينشر المستخدم أي شيء بعد.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 TDH Community. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    </body>
+</html>
