@@ -103,7 +103,6 @@
             color: #fff;
         }
 
-
         /* تنسيق زر الإعجاب (Like Button) */
         .like-btn.liked {
             color: #ef4444; /* أحمر */
@@ -218,6 +217,24 @@
             transform: scale(1.15);
             animation-play-state: paused;
         }
+
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid;
+            border-color: #4b5563; /* لون افتراضي لـ light mode */
+            transition: border-color 0.3s ease;
+        }
+        body.dark .profile-img {
+            border-color: #d1d5db; /* لون لـ dark mode */
+        }
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
         
         /* ========================================================== */
     </style>
@@ -232,14 +249,20 @@
         </a>
     </div>
 
+    <div class="flex-grow max-w-sm mx-4">
+        <div class="relative">
+            <input type="text" id="searchInput" placeholder="ابحث عن منشورات أو أسماء مستخدمين..." class="w-full pl-10 pr-4 py-2 rounded-full border-2 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors" />
+            <i class="fa-solid fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+    </div>
+    
     <div class="flex items-center gap-4 flex-wrap">
         <a href="mailto:support@tdh.org" title="البريد الإلكتروني" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-envelope fa-lg"></i></a>
         <a href="https://www.tdh.org" target="_blank" title="الموقع الرسمي" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-globe fa-lg"></i></a>
         <a href="tel:+201234567890" title="خدمة العملاء" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-phone fa-lg"></i></a>
 
         <a href="{{ url_for('centers') }}" class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">المراكز</a>
-        <a href="{{ url_for('profile') }}" class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">الملف الشخصي</a>
-
+<a href="{{ url_for('my_profile') }}" class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">الملف الشخصي</a>
         <a href="{{ url_for('logout') }}" class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">خروج</a>
 
         <select id="languageSelector" aria-label="اختيار اللغة" title="اختيار اللغة" class="bg-transparent border-2 border-white text-white rounded-full p-2 text-sm cursor-pointer transition-colors hover:bg-white hover:text-gray-900">
@@ -268,11 +291,22 @@
     </div>
 
     {% if posts %}
-        <div class="space-y-6">
+        <div id="posts-container" class="space-y-6">
             {% for post in posts %}
             <div class="post-card rounded-lg p-5">
                 <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
-                    <span class="font-semibold text-lg">{{ post.user.username }}</span>
+                    <div class="post-header">
+                        <a href="{{ url_for('user_profile', user_id=post.user.id) }}" class="flex items-center gap-3">
+                            <img 
+                                src="{{ post.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" 
+                                alt="صورة الملف الشخصي" 
+                                class="profile-img"
+                            />
+                            <span class="font-semibold text-lg hover:text-purple-500 transition-colors">
+                                {{ post.user.username }}
+                            </span>
+                        </a>
+                    </div>
                     <small class="text-gray-400 text-xs">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
                 </div>
                 <p class="mb-4 text-gray-200 body-text">{{ post.content }}</p>
@@ -305,9 +339,16 @@
                 <div id="comments-{{ post.id }}" class="hidden mt-4 space-y-2">
                     {% for comment in post.comments %}
                     <div class="bg-white/10 p-3 rounded-lg text-sm flex justify-between items-start">
-                        <div>
-                            <strong class="font-semibold text-white">{{ comment.user.username }}:</strong> 
-                            <p class="inline text-gray-200">{{ comment.content }}</p>
+                        <div class="flex items-center gap-2">
+                            <img 
+                                src="{{ comment.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" 
+                                alt="صورة الملف الشخصي" 
+                                class="w-8 h-8 rounded-full object-cover"
+                            />
+                            <div>
+                                <strong class="font-semibold text-white">{{ comment.user.username }}:</strong> 
+                                <p class="inline text-gray-200">{{ comment.content }}</p>
+                            </div>
                         </div>
                         <small class="text-gray-400 text-xs mt-1">{{ comment.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
                     </div>
@@ -368,7 +409,10 @@
     const body = document.body;
     const themeToggle = document.getElementById('themeToggle');
     const storedTheme = localStorage.getItem('theme');
-    
+    const searchInput = document.getElementById('searchInput');
+    const postsContainer = document.getElementById('posts-container');
+    const allPosts = document.querySelectorAll('.post-card');
+
     // عند تحميل الصفحة، يتم تطبيق الوضع المفضل
     if(storedTheme === 'light') {
         body.classList.add('light');
@@ -424,6 +468,22 @@
         textarea.addEventListener('input', () => {
             textarea.style.height = 'auto';
             textarea.style.height = textarea.scrollHeight + 'px';
+        });
+    });
+
+    // كود البحث المباشر
+    searchInput.addEventListener('input', () => {
+        const searchText = searchInput.value.toLowerCase().trim();
+
+        allPosts.forEach(post => {
+            const postContent = post.querySelector('.body-text').textContent.toLowerCase();
+            const postAuthor = post.querySelector('.font-semibold').textContent.toLowerCase();
+            
+            if (postContent.includes(searchText) || postAuthor.includes(searchText)) {
+                post.style.display = 'block';
+            } else {
+                post.style.display = 'none';
+            }
         });
     });
 </script>
