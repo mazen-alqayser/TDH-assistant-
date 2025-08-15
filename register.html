@@ -20,6 +20,11 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -42,6 +47,33 @@
             <input name="password" type="password" placeholder="كلمة المرور" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required>
             <input name="confirm" type="password" placeholder="تأكيد كلمة المرور" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required>
             
+            <div class="input-group">
+                <select name="phone_code" id="phone_code_select" class="p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300">
+                    <option value="" selected>اختر مفتاح الدولة</option>
+                    <option value="manual">إدخال بالكود</option>
+                    <option value="+966">+966 (السعودية)</option>
+                    <option value="+20">+20 (مصر)</option>
+                    <option value="+971">+971 (الإمارات)</option>
+                    <option value="+965">+965 (الكويت)</option>
+                    <option value="+962">+962 (الأردن)</option>
+                    <option value="+249">+249 (السودان)</option>
+                    <option value="+218">+218 (ليبيا)</option>
+                    <option value="+216">+216 (تونس)</option>
+                    <option value="+213">+213 (الجزائر)</option>
+                    <option value="+212">+212 (المغرب)</option>
+                    <option value="+963">+963 (سوريا)</option>
+                    <option value="+964">+964 (العراق)</option>
+                    <option value="+970">+970 (فلسطين)</option>
+                    <option value="+967">+967 (اليمن)</option>
+                    <option value="+968">+968 (عمان)</option>
+                    <option value="+974">+974 (قطر)</option>
+                    <option value="+973">+973 (البحرين)</option>
+                </select>
+                <input name="phone_number" id="phone_number_input" type="tel" placeholder="رقم الهاتف" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300">
+            </div>
+
+            <input name="specialization" type="text" placeholder="التخصص المختار" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300">
+
             <button type="submit" class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-300 transform hover:scale-105">تسجيل</button>
         </form>
         
@@ -51,5 +83,22 @@
             </a>
         </div>
     </div>
+    <script>
+        const phoneCodeSelect = document.getElementById('phone_code_select');
+        const phoneNumberInput = document.getElementById('phone_number_input');
+        
+        phoneCodeSelect.addEventListener('change', (event) => {
+            if (event.target.value === 'manual') {
+                phoneNumberInput.placeholder = "أدخل الكود ورقم الهاتف (مثال: +123456789)";
+            } else {
+                phoneNumberInput.placeholder = "رقم الهاتف";
+            }
+        });
+
+        // Set the initial placeholder on page load
+        if (phoneCodeSelect.value === 'manual') {
+            phoneNumberInput.placeholder = "أدخل الكود ورقم الهاتف (مثال: +123456789)";
+        }
+    </script>
 </body>
 </html>
