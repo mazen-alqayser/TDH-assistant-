@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة تحكم المشرف - TDH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --font-main: 'Cairo', sans-serif;
+            --bg-start: #0f172a;
+            --bg-end: #3b0764;
+            --accent-color: #38a169;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: #fff;
+            background: linear-gradient(135deg, var(--bg-start), #1e3a8a, var(--bg-start), var(--bg-end));
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .sidebar {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            transition: width 0.3s ease;
+        }
+        .main-content {
+            flex-grow: 1;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .btn-green {
+            background-color: var(--accent-color);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-green:hover {
+            background-color: #2f855a;
+            transform: scale(1.05);
+        }
+        .btn-red {
+            background-color: #dc2626;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-red:hover {
+            background-color: #b91c1c;
+            transform: scale(1.05);
+        }
+        .list-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        body.light .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid;
+            border-color: #d1d5db;
+            transition: border-color 0.3s ease;
+        }
+        .profile-img:hover {
+            border-color: #9ca3af;
+        }
+    </style>
+</head>
+<body class="dark flex flex-col min-h-screen">
+
+<nav class="navbar p-4 flex justify-between items-center shadow-md flex-wrap gap-3 sticky top-0 z-50">
+    <div class="flex items-center">
+        <a href="{{ url_for('index') }}" class="flex items-center gap-2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Terre_des_hommes_logo.svg/2560px-Terre_des_hommes_logo.svg.png" alt="شعار TDH" class="h-10" />
+            <span class="text-white font-bold text-2xl select-none hidden md:block">TDH</span>
+        </a>
+    </div>
+
+    <div class="flex-grow max-w-sm mx-4">
+        <div class="relative">
+            <input type="text" id="searchInput" placeholder="ابحث عن منشورات أو أسماء مستخدمين..." class="w-full pl-10 pr-4 py-2 rounded-full border-2 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors" />
+            <i class="fa-solid fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+    </div>
+    
+    <div class="flex items-center gap-4 flex-wrap">
+        <a href="mailto:support@tdh.org" title="البريد الإلكتروني" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-envelope fa-lg"></i></a>
+        <a href="https://www.tdh.org" target="_blank" title="الموقع الرسمي" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-globe fa-lg"></i></a>
+        <a href="tel:+201234567890" title="خدمة العملاء" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-phone fa-lg"></i></a>
+        <a href="{{ url_for('logout') }}" class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">خروج</a>
+    </div>
+</nav>
+
+<div class="flex flex-grow">
+    <aside class="sidebar w-64 p-6 flex flex-col justify-between sticky top-0 h-screen">
+        <div class="flex flex-col space-y-4">
+            <h1 class="text-3xl font-bold text-white mb-6 border-b border-gray-600 pb-4">لوحة المشرف</h1>
+            <a href="#users-section" class="flex items-center gap-3 p-3 rounded-lg text-lg hover:bg-gray-700 transition-colors">
+                <i class="fa-solid fa-users"></i>
+                <span>إدارة المستخدمين</span>
+            </a>
+            <a href="#posts-section" class="flex items-center gap-3 p-3 rounded-lg text-lg hover:bg-gray-700 transition-colors">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>إدارة المنشورات</span>
+            </a>
+            <a href="#centers-section" class="flex items-center gap-3 p-3 rounded-lg text-lg hover:bg-gray-700 transition-colors">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>إدارة المراكز</span>
+            </a>
+            <a href="#announcements-section" class="flex items-center gap-3 p-3 rounded-lg text-lg hover:bg-gray-700 transition-colors">
+                <i class="fa-solid fa-bullhorn"></i>
+                <span>نشر إعلانات</span>
+            </a>
+        </div>
+        <div class="mt-auto">
+            <a href="{{ url_for('logout') }}" class="flex items-center gap-3 p-3 rounded-lg text-lg text-red-400 hover:bg-red-900 transition-colors">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>تسجيل الخروج</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content p-8">
+        <div class="mb-8">
+            <h2 class="text-4xl font-extrabold text-white mb-2">مرحباً بك يا مشرف!</h2>
+            <p class="text-lg text-gray-300">هنا يمكنك إدارة جميع جوانب برنامج TDH.</p>
+        </div>
+
+        <section id="users-section" class="card p-6 rounded-xl mb-8">
+            <h3 class="text-2xl font-bold mb-4 border-b border-gray-600 pb-2">طلبات المستخدمين الجدد</h3>
+            <ul class="space-y-4">
+                {% if pending_users %}
+                    {% for user in pending_users %}
+                    <li class="list-item flex justify-between items-center p-4 rounded-lg">
+                        <div class="flex items-center gap-4">
+                            <a href="{{ url_for('user_profile', user_id=user.id) }}">
+                                <img src="{{ user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" alt="صورة الملف الشخصي" class="w-12 h-12 rounded-full object-cover">
+                            </a>
+                            <div>
+                                <p class="font-bold text-lg">{{ user.username }}</p>
+                                <p class="text-gray-400">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <form action="{{ url_for('approve_user', user_id=user.id) }}" method="POST">
+                                <button type="submit" class="btn-green text-white font-semibold py-2 px-4 rounded-full">قبول</button>
+                            </form>
+                            <form action="{{ url_for('reject_user', user_id=user.id) }}" method="POST">
+                                <button type="submit" class="btn-red text-white font-semibold py-2 px-4 rounded-full">رفض</button>
+                            </form>
+                        </div>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-gray-400 text-center py-4">لا توجد طلبات مستخدمين جديدة حاليًا.</p>
+                {% endif %}
+            </ul>
+        </section>
+
+        <section id="posts-section" class="card p-6 rounded-xl mb-8">
+            <h3 class="text-2xl font-bold mb-4 border-b border-gray-600 pb-2">إدارة المنشورات</h3>
+            <ul class="space-y-4">
+                {% if all_posts %}
+                    {% for post in all_posts %}
+                    <li class="list-item p-4 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <a href="{{ url_for('user_profile', user_id=post.user.id) }}">
+                                    <img src="{{ post.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" alt="صورة المستخدم" class="w-10 h-10 rounded-full object-cover">
+                                </a>
+                                <p class="font-bold">{{ post.user.username }}</p>
+                            </div>
+                            <p class="text-gray-400 text-sm">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+                        </div>
+                        <p class="text-gray-200 mb-4">{{ post.content }}</p>
+                        <div class="flex flex-col gap-2">
+                            <form action="{{ url_for('admin_reply_post', post_id=post.id) }}" method="POST" class="flex gap-2">
+                                <textarea name="reply_content" placeholder="اكتب ردك هنا..." rows="2" class="flex-grow p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required></textarea>
+                                <button type="submit" class="btn-green text-white font-bold py-2 px-4 rounded-lg">رد</button>
+                            </form>
+                            <div class="flex justify-end gap-2">
+                                <form action="{{ url_for('admin_delete_post', post_id=post.id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا المنشور؟');">
+                                    <button type="submit" class="btn-red text-white font-semibold py-1 px-3 rounded-full">حذف</button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-gray-400 text-center py-4">لا توجد منشورات متاحة حاليًا.</p>
+                {% endif %}
+            </ul>
+        </section>
+
+        <section id="centers-section" class="card p-6 rounded-xl mb-8">
+            <h3 class="text-2xl font-bold mb-4 border-b border-gray-600 pb-2">إدارة المراكز</h3>
+            <h4 class="text-xl font-semibold mb-3">إضافة مركز جديد</h4>
+            <form action="{{ url_for('add_center') }}" method="POST" class="space-y-4">
+                <input name="name" type="text" placeholder="اسم المركز" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required>
+                <textarea name="description" placeholder="وصف المركز" rows="3" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required></textarea>
+                <input name="location" type="text" placeholder="الموقع الجغرافي (مثال: القاهرة، مصر)" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required>
+                <button type="submit" class="btn-green text-white font-bold py-3 px-6 rounded-lg">إضافة المركز</button>
+            </form>
+            <h4 class="text-xl font-semibold mt-6 mb-3">قائمة المراكز الحالية</h4>
+            <ul class="space-y-2">
+                {% if centers %}
+                    {% for center in centers %}
+                    <li class="flex justify-between items-center p-3 rounded-lg bg-gray-800/40">
+                        <p class="font-medium">{{ center.name }} - <span class="text-gray-400">{{ center.location }}</span></p>
+                        <form action="{{ url_for('delete_center', center_id=center.id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا المركز؟');">
+                            <button type="submit" class="btn-red text-white py-1 px-3 rounded-full">حذف</button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-gray-400">لا توجد مراكز متاحة حاليًا.</p>
+                {% endif %}
+            </ul>
+        </section>
+
+        <section id="announcements-section" class="card p-6 rounded-xl mb-8">
+            <h3 class="text-2xl font-bold mb-4 border-b border-gray-600 pb-2">نشر إعلانات ومنشورات هامة</h3>
+            <p class="text-gray-400 mb-4">هذه المنشورات ستظهر بشكل مميز في الصفحة الرئيسية.</p>
+            <form action="{{ url_for('publish_announcement') }}" method="POST" class="space-y-4">
+                <textarea name="content" placeholder="محتوى الإعلان (مثال: شروط جديدة، دورات تدريبية، مناسبات)" rows="6" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required></textarea>
+                <button type="submit" class="btn-green text-white font-bold py-3 px-6 rounded-lg">نشر الإعلان</button>
+            </form>
+        </section>
+
+    </main>
+</div>
+</body>
+</html>
