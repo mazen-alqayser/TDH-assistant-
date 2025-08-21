@@ -89,14 +89,24 @@
         .profile-img:hover {
             border-color: #9ca3af;
         }
+        /* تنسيق علامة التوثيق */
+        .verified-badge {
+            color: #34d399; /* لون أخضر فاتح */
+            font-size: 1rem;
+            margin-right: 4px;
+        }
     </style>
 </head>
 <body class="dark flex flex-col min-h-screen">
 
 <nav class="navbar p-4 flex justify-between items-center shadow-md flex-wrap gap-3 sticky top-0 z-50">
     <div class="flex items-center">
-        <a href="{{ url_for('index') }}" class="flex items-center gap-2">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Terre_des_hommes_logo.svg/2560px-Terre_des_hommes_logo.svg.png" alt="شعار TDH" class="h-10" />
+        <a href="{{ url_for('index') }}" class="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 transition-colors">
+            <i class="fa-solid fa-home fa-xl text-white"></i>
+            <span class="text-white font-bold text-lg select-none hidden md:block">الرئيسية</span>
+        </a>
+        <a href="{{ url_for('admin_dashboard') }}" class="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 transition-colors">
+            <img src="https://www.tdh.org/themes/custom/tailwinded/images/Logo_Tdh_english.svg" alt="شعار TDH" class="h-10" />
             <span class="text-white font-bold text-2xl select-none hidden md:block">TDH</span>
         </a>
     </div>
@@ -107,11 +117,14 @@
             <i class="fa-solid fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
         </div>
     </div>
-    
+
     <div class="flex items-center gap-4 flex-wrap">
         <a href="mailto:support@tdh.org" title="البريد الإلكتروني" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-envelope fa-lg"></i></a>
         <a href="https://www.tdh.org" target="_blank" title="الموقع الرسمي" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-globe fa-lg"></i></a>
         <a href="tel:+201234567890" title="خدمة العملاء" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-phone fa-lg"></i></a>
+        {% if is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}" class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">لوحة المشرف</a>
+        {% endif %}
         <a href="{{ url_for('logout') }}" class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">خروج</a>
     </div>
 </nav>
@@ -128,7 +141,7 @@
                 <i class="fa-solid fa-file-lines"></i>
                 <span>إدارة المنشورات</span>
             </a>
-            <a href="#centers-section" class="flex items-center gap-3 p-3 rounded-lg text-lg hover:bg-gray-700 transition-colors">
+            <a href="{{ url_for('centers') }}" class="flex items-center gap-3 p-3 rounded-lg text-lg hover:bg-gray-700 transition-colors">
                 <i class="fa-solid fa-location-dot"></i>
                 <span>إدارة المراكز</span>
             </a>
@@ -193,11 +206,19 @@
                                 <a href="{{ url_for('user_profile', user_id=post.user.id) }}">
                                     <img src="{{ post.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" alt="صورة المستخدم" class="w-10 h-10 rounded-full object-cover">
                                 </a>
-                                <p class="font-bold">{{ post.user.username }}</p>
+                                <p class="font-bold flex items-center gap-1">
+                                    {{ post.user.username }}
+                                    {% if post.user.is_admin %}
+                                        <i class="fa-solid fa-check-circle verified-badge" title="حساب موثق"></i>
+                                    {% endif %}
+                                </p>
                             </div>
                             <p class="text-gray-400 text-sm">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
                         </div>
-                        <p class="text-gray-200 mb-4">{{ post.content }}</p>
+                        <div class="text-gray-200 mb-4 whitespace-pre-wrap">{{ post.content }}</div>
+                        {% if post.image_url %}
+                            <img src="{{ post.image_url }}" alt="صورة المنشور" class="w-full h-auto rounded-lg my-4">
+                        {% endif %}
                         <div class="flex flex-col gap-2">
                             <form action="{{ url_for('admin_reply_post', post_id=post.id) }}" method="POST" class="flex gap-2">
                                 <textarea name="reply_content" placeholder="اكتب ردك هنا..." rows="2" class="flex-grow p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required></textarea>
@@ -217,42 +238,61 @@
             </ul>
         </section>
 
-        <section id="centers-section" class="card p-6 rounded-xl mb-8">
-            <h3 class="text-2xl font-bold mb-4 border-b border-gray-600 pb-2">إدارة المراكز</h3>
-            <h4 class="text-xl font-semibold mb-3">إضافة مركز جديد</h4>
-            <form action="{{ url_for('add_center') }}" method="POST" class="space-y-4">
-                <input name="name" type="text" placeholder="اسم المركز" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required>
-                <textarea name="description" placeholder="وصف المركز" rows="3" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required></textarea>
-                <input name="location" type="text" placeholder="الموقع الجغرافي (مثال: القاهرة، مصر)" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required>
-                <button type="submit" class="btn-green text-white font-bold py-3 px-6 rounded-lg">إضافة المركز</button>
-            </form>
-            <h4 class="text-xl font-semibold mt-6 mb-3">قائمة المراكز الحالية</h4>
-            <ul class="space-y-2">
-                {% if centers %}
-                    {% for center in centers %}
-                    <li class="flex justify-between items-center p-3 rounded-lg bg-gray-800/40">
-                        <p class="font-medium">{{ center.name }} - <span class="text-gray-400">{{ center.location }}</span></p>
-                        <form action="{{ url_for('delete_center', center_id=center.id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا المركز؟');">
-                            <button type="submit" class="btn-red text-white py-1 px-3 rounded-full">حذف</button>
-                        </form>
-                    </li>
-                    {% endfor %}
-                {% else %}
-                    <p class="text-gray-400">لا توجد مراكز متاحة حاليًا.</p>
-                {% endif %}
-            </ul>
-        </section>
-
         <section id="announcements-section" class="card p-6 rounded-xl mb-8">
             <h3 class="text-2xl font-bold mb-4 border-b border-gray-600 pb-2">نشر إعلانات ومنشورات هامة</h3>
             <p class="text-gray-400 mb-4">هذه المنشورات ستظهر بشكل مميز في الصفحة الرئيسية.</p>
-            <form action="{{ url_for('publish_announcement') }}" method="POST" class="space-y-4">
+            <form action="{{ url_for('publish_announcement') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                 <textarea name="content" placeholder="محتوى الإعلان (مثال: شروط جديدة، دورات تدريبية، مناسبات)" rows="6" class="w-full p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required></textarea>
+                <div class="flex items-center justify-between bg-gray-800/50 p-3 rounded-lg border border-gray-700">
+                    <label for="announcement_image" class="text-gray-400 cursor-pointer hover:text-white transition-colors">
+                        <i class="fa-solid fa-image ml-2"></i>
+                        <span>اختر صورة (اختياري)</span>
+                    </label>
+                    <input type="file" name="announcement_image" id="announcement_image" accept="image/*" class="hidden">
+                    <span id="file-name" class="text-gray-500 text-sm">لم يتم اختيار ملف</span>
+                </div>
                 <button type="submit" class="btn-green text-white font-bold py-3 px-6 rounded-lg">نشر الإعلان</button>
             </form>
         </section>
 
     </main>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        const fileInput = document.getElementById('announcement_image');
+        const fileNameSpan = document.getElementById('file-name');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const sections = document.querySelectorAll('#posts-section .list-item, #users-section .list-item');
+
+            sections.forEach(item => {
+                const userText = item.querySelector('.font-bold').textContent.toLowerCase();
+                let postText = '';
+                const postContentEl = item.querySelector('.text-gray-200');
+                if (postContentEl) {
+                    postText = postContentEl.textContent.toLowerCase();
+                }
+
+                if (userText.includes(searchTerm) || postText.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileNameSpan.textContent = e.target.files[0].name;
+            } else {
+                fileNameSpan.textContent = 'لم يتم اختيار ملف';
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
