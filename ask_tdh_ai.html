@@ -106,12 +106,12 @@
     <header class="flex items-center justify-between p-4 border-b border-gray-700 flex-shrink-0">
         <div class="flex items-center gap-4">
             <a href="/" class="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800 transition-colors">
-                <img src="https://daleel-madani.org/sites/default/files/logos/logo_en_jpg-01.png" alt="TDH Logo" class="w-10 h-auto" />
+                <img src="https://www.tdh.org/themes/custom/tailwinded/images/Logo_Tdh_english.svg" alt="TDH Logo" class="w-10 h-auto" />
                 <span class="text-xl font-bold">TDH</span>
             </a>
             <div class="flex-grow">
                 <h1 id="pageTitle" class="text-xl font-bold">مساعد TDH الذكي</h1>
-                <p class="text-sm text-gray-400">متصل الآن</p>
+                <p class="text-sm text-gray-400"> online now-متصل الآن</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -129,15 +129,15 @@
                     <i class="fa-solid fa-ellipsis-vertical"></i>
                 </button>
                 <div class="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg hidden group-focus-within:block group-hover:block z-10">
-                    <a id="emailButton" href="mailto:support@example.com" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                    <a id="emailButton" href="egy.contact@tdh.ch" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
                         <i class="fa-solid fa-envelope w-4"></i>
                         <span>البريد الإلكتروني</span>
                     </a>
-                    <a id="callButton" href="tel:+201234567890" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                    <a id="callButton" href="tel:+01022273561" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
                         <i class="fa-solid fa-phone w-4"></i>
                         <span>الاتصال</span>
                     </a>
-                    <a id="websiteButton" href="https://example.com" target="_blank" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                    <a id="websiteButton" href="https://www.tdh.org/en/terre-des-hommes-websites" target="_blank" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
                         <i class="fa-solid fa-globe w-4"></i>
                         <span>زيارة الموقع</span>
                     </a>
@@ -295,7 +295,7 @@
 
         try {
             // هنا تُرسل الطلب للخادم. في بيئتك المحلية قد تحتاج لتعديل المسار.
-            const response = await fetch("/ask", {
+            const response = await fetch("/api/ask", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ question })
