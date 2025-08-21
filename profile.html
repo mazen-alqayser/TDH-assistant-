@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8" />
     <title>الملف الشخصي - TDH</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
-    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap"
+        rel="stylesheet" />
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <style>
         :root {
             --font-main: 'Cairo', sans-serif;
@@ -38,80 +39,171 @@
         }
 
         @keyframes bgMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
+        /* -------------------
+        * تعديلات النافبار 
+        * ------------------- */
         .navbar {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(12px);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
+
         body.light .navbar {
             background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
+        /* -------------------
+        * نهاية تعديلات النافبار 
+        * ------------------- */
+
+        .center-card,
+        .post-card,
         .profile-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease, color 0.4s ease;
         }
+
+        .center-card:hover,
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        body.light .center-card,
+        body.light .post-card,
         body.light .profile-card {
             background: #ffffff;
             backdrop-filter: none;
             border: 1px solid #d1d5db;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
-        
-        /* Light mode colors for text and links */
-        body.light .text-gray-200 { color: #4b5563; }
-        body.light .text-gray-400 { color: #6b7280; }
-        body.light .text-white { color: #1f2937 !important; }
-        body.light .navbar a { color: #4b5563; }
-        body.light .navbar a:hover { color: #111827; }
-        body.light .logout-btn { 
+
+        body.light .center-card:hover,
+        body.light .post-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light .text-gray-200 {
+            color: #4b5563;
+        }
+
+        body.light .text-gray-400 {
+            color: #6b7280;
+        }
+
+        body.light .text-white {
+            color: #1f2937 !important;
+        }
+
+        body.light .navbar a {
+            color: #4b5563;
+        }
+
+        body.light .navbar a:hover {
+            color: #111827;
+        }
+
+        body.light .logout-btn {
             color: #1f2937;
             border-color: #6b7280;
         }
-        body.light .logout-btn:hover { 
+
+        body.light .logout-btn:hover {
             background-color: #1f2937;
             color: #fff;
         }
-        body.light .navbar select { 
+
+        body.light .navbar select {
             color: #1f2937;
             border-color: #6b7280;
             background-color: transparent;
         }
+
         body.light .navbar select:hover {
             background-color: #1f2937;
             color: #fff;
         }
 
-        /* The switch - from home page */
+        .like-btn.liked {
+            color: #ef4444;
+        }
+
+        .like-btn.not-liked {
+            color: #d1d5db;
+        }
+
+        body.light .like-btn.not-liked {
+            color: #6b7280;
+        }
+
+        body.light .text-gray-700 {
+            color: #4a5568;
+        }
+
+        body.light .text-gray-500 {
+            color: #718096;
+        }
+
+        body.light .text-gray-800 {
+            color: #1f2937;
+        }
+
+        body.dark .text-gray-800 {
+            color: #e0e6f0;
+        }
+
+        body.light .bg-gray-100 {
+            background-color: #f7fafc;
+        }
+
+        body.dark .bg-gray-100 {
+            background-color: #1a202c;
+        }
+
         .switch {
             position: relative;
             display: inline-block;
             width: 42px;
             height: 22px;
         }
+
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
+
         .slider {
             position: absolute;
             cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background-color: #555;
             transition: 0.4s;
             border-radius: 9999px;
         }
+
         .slider:before {
             position: absolute;
             content: "";
@@ -128,150 +220,469 @@
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
         }
-        input:checked + .slider {
+
+        input:checked+.slider {
             background-color: #38a169;
         }
-        input:checked + .slider:before {
+
+        input:checked+.slider:before {
             transform: translateX(20px);
         }
-        body.dark .slider:before { content: "\f186"; font-size: 10px; color: #555; }
-        body.light .slider:before { content: "\f185"; font-size: 10px; color: #38a169; }
 
+        body.dark .slider:before {
+            content: "\f186";
+            font-size: 10px;
+            color: #555;
+        }
+
+        body.light .slider:before {
+            content: "\f185";
+            font-size: 10px;
+            color: #38a169;
+        }
+
+        /* -------------------
+        * تعديلات جديدة للملف الشخصي
+        * ------------------- */
+        .profile-img {
+            width: 128px;
+            height: 128px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid;
+            transition: border-color 0.4s ease;
+        }
+
+        body.dark .profile-img {
+            border-color: #e0e6f0;
+            /* لون فاتح متناسق مع الخلفية الداكنة */
+        }
+
+        body.light .profile-img {
+            border-color: #1f2937;
+            /* لون داكن متناسق مع الخلفية الفاتحة */
+        }
+
+        .profile-card h1 {
+            transition: color 0.4s ease;
+        }
+
+        body.dark .profile-card h1 {
+            color: #e0e6f0;
+            /* لون فاتح للعناوين في الوضع الليلي */
+        }
+
+        body.light .profile-card h1 {
+            color: #1f2937;
+            /* لون داكن للعناوين في الوضع النهاري */
+        }
+
+        .profile-card button {
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        body.dark .profile-card button {
+            background-color: #4b5563;
+            /* لون خلفية أزرار متناسق مع الوضع الداكن */
+            color: #e0e6f0;
+        }
+
+        body.light .profile-card button {
+            background-color: #e5e7eb;
+            /* لون خلفية أزرار متناسق مع الوضع الفاتح */
+            color: #1f2937;
+        }
+
+        /* -------------------
+        * نهاية التعديلات
+        * ------------------- */
     </style>
 </head>
-<body class="dark flex flex-col min-h-screen">
 
-<nav class="navbar p-4 flex justify-between items-center shadow-md flex-wrap gap-3 sticky top-0 z-50">
-    <div class="flex items-center">
-        <a href="{{ url_for('index') }}" class="flex items-center gap-2">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Terre_des_hommes_logo.svg/2560px-Terre_des_hommes_logo.svg.png" alt="شعار TDH" class="h-10" />
-            <span class="text-white font-bold text-2xl select-none hidden md:block">TDH</span>
-        </a>
-    </div>
-
-    <div class="flex-grow max-w-sm mx-4 hidden md:block">
-        <div class="relative">
-            <input type="text" id="searchInput" placeholder="ابحث عن منشورات أو أسماء مستخدمين..." class="w-full pl-10 pr-4 py-2 rounded-full border-2 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors" />
-            <i class="fa-solid fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-        </div>
-    </div>
-    
-    <div class="flex items-center gap-4 flex-wrap">
-        <a href="mailto:support@tdh.org" title="البريد الإلكتروني" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-envelope fa-lg"></i></a>
-        <a href="https://www.tdh.org" target="_blank" title="الموقع الرسمي" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-globe fa-lg"></i></a>
-        <a href="tel:+201234567890" title="خدمة العملاء" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-phone fa-lg"></i></a>
-
-        <a href="{{ url_for('index') }}" class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">الرئيسية</a>
-        <a href="{{ url_for('centers') }}" class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">المراكز</a>
-        <a href="{{ url_for('logout') }}" class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">خروج</a>
-
-        <select id="languageSelector" aria-label="اختيار اللغة" title="اختيار اللغة" class="bg-transparent border-2 border-white text-white rounded-full p-2 text-sm cursor-pointer transition-colors hover:bg-white hover:text-gray-900">
-            <option value="ar" class="bg-gray-800 text-white" selected>العربية</option>
-            <option value="en" class="bg-gray-800 text-white">English</option>
-            <option value="ti" class="bg-gray-800 text-white">ትግርኛ</option>
-            <option value="am" class="bg-gray-800 text-white">አማርኛ</option>
-            <option value="de" class="bg-gray-800 text-white">Deutsch</option>
-        </select>
-
-        <label class="switch" title="تبديل الوضع">
-            <input type="checkbox" id="themeToggle" />
-            <span class="slider"></span>
-        </label>
-    </div>
-</nav>
-
-<div class="flex items-center justify-center min-h-[calc(100vh-6rem)] p-4">
-    <div class="w-full max-w-xl profile-card p-8 rounded-xl text-center">
-        <h2 class="text-3xl font-bold mb-6 text-purple-400 dark:text-purple-400">الملف الشخصي</h2>
-        
-        <div class="relative w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-purple-500 dark:border-purple-400 shadow-md">
-            {% if user.profile_picture %}
-            <img src="{{ url_for('static', filename='profile_pics/' + user.profile_picture) }}" alt="صورة الملف الشخصي" class="w-full h-full object-cover">
-            {% else %}
-            <div class="w-full h-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 text-6xl">
-                <i class="fa-solid fa-user"></i>
-            </div>
-            {% endif %}
+<body class="bg-gray-100 text-gray-800 transition-colors duration-500 dark:bg-gray-900 dark:text-gray-200">
+  <nav
+        class="navbar glass-effect p-4 flex justify-between items-center shadow-md flex-wrap gap-3 sticky top-0 z-50 transition-transform duration-300">
+        <div class="flex items-center">
+            <a href="{{ url_for('index') }}" class="flex items-center gap-2">
+                <img src="https://www.tdh.org/themes/custom/tailwinded/images/Logo_Tdh_english.svg"
+                    alt="شعار TDH" class="h-10 w-auto" />
+                <span class="text-white font-bold text-2xl select-none hidden md:block">TDH</span>
+            </a>
         </div>
 
-        <div class="mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
-            <p class="text-lg">
-                <span class="font-bold text-gray-300">اسم المستخدم:</span> 
-                <span class="text-blue-400">{{ user.username }}</span>
-            </p>
+        <div class="flex-grow max-w-sm mx-4">
+            </div>
+
+        <div class="flex items-center gap-4 flex-wrap">
+            <a href="mailto:support@tdh.org" title="البريد الإلكتروني"
+                class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-envelope fa-lg"></i></a>
+            <a href="https://www.tdh.org" target="_blank" title="الموقع الرسمي"
+                class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-globe fa-lg"></i></a>
+            <a href="tel:+201234567890" title="خدمة العملاء"
+                class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-phone fa-lg"></i></a>
+
+            <a href="{{ url_for('centers') }}"
+                class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">المراكز</a>
+            <a href="{{ url_for('my_profile') }}"
+                class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">الملف
+                الشخصي</a>
+            <a href="{{ url_for('logout') }}"
+                class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">خروج</a>
+
+            <select id="languageSelector" aria-label="اختيار اللغة" title="اختيار اللغة"
+                class="bg-transparent border-2 border-white text-white rounded-full p-2 text-sm cursor-pointer transition-colors hover:bg-white hover:text-gray-900">
+                <option value="ar" class="bg-gray-800 text-white" selected>العربية</option>
+                <option value="en" class="bg-gray-800 text-white">English</option>
+                <option value="ti" class="bg-gray-800 text-white">ትግርኛ</option>
+                <option value="am" class="bg-gray-800 text-white">አማርኛ</option>
+                <option value="de" class="bg-gray-800 text-white">Deutsch</option>
+            </select>
+
+            <label class="switch" title="تبديل الوضع">
+                <input type="checkbox" id="themeToggle" />
+                <span class="slider"></span>
+            </label>
         </div>
-        
-        <form method="POST" enctype="multipart/form-data" class="mb-6">
-            <div class="mb-4">
-                <label for="profile_picture" class="block text-gray-400 text-sm font-semibold mb-2">تغيير صورة الملف الشخصي</label>
-                <input id="profile_picture" name="profile_picture" type="file" accept="image/*" class="w-full text-sm text-gray-400
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-full file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-purple-500/20 file:text-purple-400
-                    hover:file:bg-purple-500/30 transition-colors" />
-            </div>
-
-            <div class="mb-4">
-                <label for="training_course" class="block text-gray-400 text-sm font-semibold mb-2">اسم الدورة التدريبية</label>
-                <input id="training_course" name="training_course" type="text" class="w-full px-4 py-2 bg-white/10 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-purple-500 transition-colors" value="{{ user.training_course or '' }}">
-            </div>
-            <button name="update_course" type="submit" class="w-full py-3 rounded-lg text-lg text-white font-bold bg-green-600 hover:bg-green-700 transition-colors duration-300">
-                <i class="fa-solid fa-check ml-2"></i>تحديث
-            </button>
-        </form>
-
-        <form method="POST" onsubmit="return confirm('هل أنت متأكد من حذف الحساب؟ لا يمكن التراجع!');">
-            <button name="delete_account" type="submit" class="w-full py-3 rounded-lg text-lg text-white font-bold bg-red-600 hover:bg-red-700 transition-colors duration-300">
-                <i class="fa-solid fa-trash-alt ml-2"></i> حذف الحساب
-            </button>
-        </form>
-
+    </nav>
+    <main class="container mx-auto px-4 py-20 md:py-24 max-w-3xl">
         {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <div class="mt-4">
-              {% for category, message in messages %}
-                <div class="py-2 px-4 rounded-lg text-sm text-green-200 dark:text-green-300 bg-green-800/50 dark:bg-green-900/50">
-                    {{ message }}
-                </div>
-              {% endfor %}
-            </div>
-          {% endif %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="p-4 mb-4 text-sm rounded-lg {{ 'text-green-800 bg-green-50' if category == 'success' else 'text-yellow-800 bg-yellow-50' }} dark:bg-gray-800 {{ 'dark:text-green-400' if category == 'success' else 'dark:text-yellow-300' }}"
+            role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
         {% endwith %}
+
+        <section class="profile-card rounded-lg p-6 mb-8 text-center transition-colors duration-500">
+            <div class="flex flex-col items-center">
+                <img src="{{ user.profile_pic_url }}" alt="صورة الملف الشخصي" class="profile-img mb-4">
+                <h1 class="text-3xl font-bold mb-2">{{ user.username }}</h1>
+                <p class="text-gray-200 mb-2">{{ user.bio }}</p>
+                <p class="text-gray-400 text-sm">
+                    <i class="fa-solid fa-graduation-cap ml-1"></i>
+                    {{ user.training_course or "لا يوجد دورة تدريبية محددة." }}
+                </p>
+            </div>
+
+            <div class="mt-6 flex justify-center space-x-4 space-x-reverse">
+                {% if user.id == current_user.id %}
+                <button id="editProfileBtn"
+                    class="bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors duration-300">
+                    تعديل الملف الشخصي
+                </button>
+                {% endif %}
+            </div>
+        </section>
+
+        <div id="editProfileModal"
+            class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50">
+            <div class="bg-gray-100 rounded-lg shadow-xl p-6 w-full max-w-md transition-colors duration-500">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">تعديل الملف الشخصي</h3>
+                    <button id="closeModalBtn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+                </div>
+                <form id="editProfileForm" action="{{ url_for('my_profile') }}" method="POST"
+                    enctype="multipart/form-data">
+                    <div class="mb-4 text-center">
+                        <img id="profilePreview" src="{{ user.profile_pic_url }}"
+                            class="w-24 h-24 rounded-full mx-auto mb-2 object-cover">
+                        <label for="profile_picture" class="cursor-pointer text-blue-600 hover:underline">تغيير
+                            الصورة</label>
+                        <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="hidden">
+                    </div>
+                    <div class="mb-4">
+                        <label for="bio" class="block text-gray-700 font-bold mb-2">نبذة عني:</label>
+                        <textarea id="bio" name="bio" rows="3"
+                            class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 placeholder-gray-400"
+                            placeholder="اكتب نبذة مختصرة عنك...">{{ user.bio }}</textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="training_course" class="block text-gray-700 font-bold mb-2">الدورة
+                            التدريبية:</label>
+                        <input type="text" id="training_course" name="training_course"
+                            class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 placeholder-gray-400"
+                            value="{{ user.training_course or '' }}" placeholder="مثل: الدورة الرابعة">
+                    </div>
+                    <div class="flex justify-end space-x-2 space-x-reverse">
+                        <button type="submit" name="update_profile_button"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300">
+                            حفظ التغييرات
+                        </button>
+                    </div>
+                </form>
+                <form action="{{ url_for('my_profile') }}" method="POST"
+                    onsubmit="return confirm('هل أنت متأكد من حذف الحساب؟ لا يمكن التراجع عن هذا الإجراء.');"
+                    class="mt-4">
+                    <button type="submit" name="delete_account"
+                        class="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-300">
+                        حذف الحساب نهائياً
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <section class="user-posts">
+            <h2 class="text-2xl font-bold mb-4 text-center">منشوراتي</h2>
+            <div id="posts-container" class="space-y-6">
+                {% if user_posts %}
+                {% for post in user_posts %}
+                <div
+                    class="post-card rounded-lg p-6 transition-colors duration-500 hover:transform hover:translate-y-[-5px]">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center space-x-4 space-x-reverse">
+                            <img src="{{ post.user.profile_pic_url }}" alt="صورة الملف الشخصي"
+                                class="w-10 h-10 rounded-full object-cover">
+                            <div>
+                                <h3 class="font-bold">{{ post.user.username }}</h3>
+                                <p class="text-sm text-gray-500">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+                            </div>
+                        </div>
+                        {% if post.user_id == current_user.id %}
+                        <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+                            <button type="submit"
+                                class="text-gray-400 hover:text-red-500 transition-colors duration-300">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    <div class="post-content mb-4">
+                        <p class="text-gray-700 mb-4">{{ post.content }}</p>
+                        {% if post.image_url %}
+                        <img src="{{ post.image_url }}" alt="صورة المنشور"
+                            class="w-full rounded-lg shadow-lg mb-4 cursor-pointer"
+                            onclick="openImageModal('{{ post.image_url }}')">
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center justify-between text-gray-500">
+                        <div class="flex items-center space-x-4 space-x-reverse">
+                            <button class="like-btn flex items-center space-x-1 space-x-reverse focus:outline-none"
+                                data-post-id="{{ post.id }}">
+                                <i
+                                    class="fa-heart {% if post.id in liked_post_ids %}fa-solid liked{% else %}fa-regular not-liked{% endif %} text-lg transition-colors duration-300"></i>
+                                <span class="like-count text-sm">{{ post.likes }}</span>
+                            </button>
+                            <button class="comment-btn flex items-center space-x-1 space-x-reverse focus:outline-none"
+                                data-post-id="{{ post.id }}">
+                                <i class="fa-regular fa-comment text-lg"></i>
+                                <span class="comment-count text-sm">{{ post.comments|length }}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="comments-{{ post.id }}" class="comments-section mt-4 bg-gray-900/40 p-4 rounded-lg hidden">
+                        <h4 class="font-semibold mb-2 text-white">التعليقات</h4>
+                        <div class="space-y-3 mb-4 comment-list">
+                            {% for comment in post.comments %}
+                            <div class="comment flex items-start space-x-3 space-x-reverse">
+                                <img src="{{ comment.user.profile_pic_url }}"
+                                    class="w-8 h-8 rounded-full object-cover profile-img">
+                                <div class="bg-white/10 p-3 rounded-xl flex-1">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <p class="font-bold text-sm">{{
+                                            comment.user.username }}</p>
+                                        <p class="text-xs text-gray-400">الآن</p>
+                                    </div>
+                                    <p class="text-sm text-gray-200">{{
+                                        comment.content }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <form class="comment-form flex items-center gap-2 mt-4" data-post-id="{{ post.id }}">
+                            <input type="text" name="content" placeholder="أضف تعليقًا..."
+                                class="comment-input w-full p-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 placeholder-gray-400 text-sm">
+                            <button type="submit"
+                                class="bg-blue-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center hover:bg-blue-700 transition-colors duration-300">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="text-center text-gray-500 mt-10">
+                    <p>لم يتم نشر أي شيء بعد.</p>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <div id="imageModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 p-4"
+        onclick="closeImageModal()">
+        <span class="absolute top-4 right-4 text-white text-4xl cursor-pointer">&times;</span>
+        <img id="modalImage" src="#" class="max-w-full max-h-full rounded-lg" onclick="event.stopPropagation();">
     </div>
-</div>
 
-<script>
-    const body = document.body;
-    const themeToggle = document.getElementById('themeToggle');
-    const storedTheme = localStorage.getItem('theme');
+    <script>
+        const body = document.body;
+        const themeToggle = document.getElementById('themeToggle');
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const editProfileModal = document.getElementById('editProfileModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const profilePictureInput = document.getElementById('profile_picture');
+        const profilePreview = document.getElementById('profilePreview');
 
-    // Upon page load, apply the saved theme
-    if(storedTheme === 'light') {
-        body.classList.add('light');
-        themeToggle.checked = true;
-    } else {
-        body.classList.add('dark');
-        themeToggle.checked = false;
-    }
-
-    // Event listener for the toggle switch
-    themeToggle.addEventListener('change', () => {
-        if(themeToggle.checked) {
-            body.classList.replace('dark', 'light');
-            localStorage.setItem('theme', 'light');
+        // Theme switching logic
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            body.classList.add(savedTheme);
+            themeToggle.checked = savedTheme === 'light';
         } else {
-            body.classList.replace('light', 'dark');
-            localStorage.setItem('theme', 'dark');
+            body.classList.add('dark');
+            themeToggle.checked = false;
         }
-    });
 
-    // Language selector from home page
-    document.getElementById('languageSelector').addEventListener('change', (e) => {
-        const lang = e.target.value;
-        alert('تم اختيار اللغة: ' + lang + '. يرجى تطبيق تغيير اللغة في الخادم');
-    });
-</script>
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                body.classList.replace('dark', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.replace('light', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
 
+        // Edit profile modal logic
+        if (editProfileBtn) {
+            editProfileBtn.addEventListener('click', () => {
+                editProfileModal.classList.remove('hidden');
+                body.style.overflow = 'hidden';
+            });
+        }
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', () => {
+                editProfileModal.classList.add('hidden');
+                body.style.overflow = '';
+            });
+        }
+        if (profilePictureInput) {
+            profilePictureInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        profilePreview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Image modal functionality
+        function openImageModal(imageUrl) {
+            const modalImage = document.getElementById('modalImage');
+            const imageModal = document.getElementById('imageModal');
+            modalImage.src = imageUrl;
+            imageModal.classList.remove('hidden');
+            body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const imageModal = document.getElementById('imageModal');
+            imageModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        window.openImageModal = openImageModal;
+        window.closeImageModal = closeImageModal;
+
+        // AJAX for like button
+        document.querySelectorAll('.like-btn').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                event.preventDefault();
+                const postId = event.currentTarget.dataset.postId;
+                const likeCountElement = event.currentTarget.querySelector('.like-count');
+                const likeIcon = event.currentTarget.querySelector('.fa-heart');
+                try {
+                    const response = await fetch(`/like/${postId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        likeCountElement.textContent = data.likes;
+                        if (data.liked) {
+                            likeIcon.classList.replace('fa-regular', 'fa-solid');
+                            likeIcon.classList.add('liked');
+                            likeIcon.classList.remove('not-liked');
+                        } else {
+                            likeIcon.classList.replace('fa-solid', 'fa-regular');
+                            likeIcon.classList.remove('liked');
+                            likeIcon.classList.add('not-liked');
+                        }
+                    } else {
+                        alert('حدث خطأ: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('حدث خطأ في الاتصال بالخادم.');
+                }
+            });
+        });
+
+        // وظيفة إظهار/إخفاء التعليقات
+        document.querySelectorAll('.comment-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
+                const postId = event.currentTarget.dataset.postId;
+                const commentsSection = document.getElementById(`comments-${postId}`);
+                if (commentsSection) {
+                    commentsSection.classList.toggle('hidden');
+                }
+            });
+        });
+
+        // ⚠️ تم التعديل: تغيير AJAX لإرسال التعليق إلى form data
+        document.querySelectorAll('.comment-form').forEach(form => {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const postId = event.target.dataset.postId;
+                const commentInput = event.target.querySelector('.comment-input');
+                const content = commentInput.value.trim();
+                if (!content) return;
+
+                const formData = new FormData();
+                formData.append('content', content);
+
+                try {
+                    const response = await fetch(`/comment/${postId}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        const commentsList = document.getElementById(`comments-${postId}`).querySelector('.comment-list');
+                        const newCommentHtml = `
+                                <div class="comment flex items-start space-x-3 space-x-reverse">
+                                    <img src="{{ current_user.profile_pic_url }}" class="w-8 h-8 rounded-full object-cover">
+                                    <div class="bg-gray-200 dark:bg-gray-600 p-3 rounded-xl flex-1">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <p class="font-bold text-sm">{{ current_user.username }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">الآن</p>
+                                        </div>
+                                        <p class="text-sm text-gray-800 dark:text-gray-100">${content}</p>
+                                    </div>
+                                </div>`;
+                        commentsList.innerHTML += newCommentHtml;
+                        commentInput.value = '';
+                    } else {
+                        alert('حدث خطأ: ' + data.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('حدث خطأ في الاتصال بالخادم.');
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>
