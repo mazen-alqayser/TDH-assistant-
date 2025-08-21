@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>الملف الشخصي لـ {{ user.username }}</title>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" />
-    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap"
+        rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
-        /* تم استيراد جميع الأنماط من الصفحة الرئيسية لتوحيد التصميم */
         :root {
             --font-main: 'Cairo', sans-serif;
+            --font-alt: 'Amiri', serif;
         }
+
+        /* Base Body Styling with a smoother transition */
         body {
             font-family: var(--font-main);
             min-height: 100vh;
@@ -22,197 +23,676 @@
             background-size: 400% 400%;
             animation: bgMove 20s ease infinite;
         }
+
+        /* Dark Mode Colors & Background */
         body.dark {
             background: linear-gradient(-45deg, #0a1128, #1a2a51, #0a1128, #1a2a51);
             color: #e0e6f0;
         }
+
+        /* Light Mode Colors & Background - IMPROVED */
         body.light {
-            background: linear-gradient(-45deg, #f3f4f6, #e5e7eb, #f3f4f6, #e5e7eb);
+            background: linear-gradient(-45deg, #e0e6f0, #f0f3f8, #e0e6f0, #f0f3f8);
             color: #1f2937;
         }
+
+        /* Background Gradient Animation */
         @keyframes bgMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
-        .navbar {
+
+        /* Navbar & Card Glassmorphism Effect */
+        .glass-effect {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(12px);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease-in-out;
         }
-        body.light .navbar {
+
+        body.light .glass-effect {
             background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
-        .post-card, .profile-card {
+
+        /* Post Cards & Profile Section */
+        .post-card,
+        .profile-section {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .post-card:hover, .profile-card:hover {
+
+        .post-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
-        body.light .post-card, body.light .profile-card {
+
+        body.light .post-card,
+        body.light .profile-section {
             background: #ffffff;
+            backdrop-filter: none;
             border: 1px solid #d1d5db;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
-        body.light .text-white { color: #1f2937 !important; }
-        body.light .text-gray-200 { color: #4b5563; }
-        body.light .text-gray-400 { color: #6b7280; }
-        body.light .navbar a, body.light .navbar select { color: #4b5563; border-color: #6b7280; }
-        body.light .navbar a:hover { color: #111827; }
-        .like-btn.liked { color: #ef4444; }
-        .switch { position: relative; display: inline-block; width: 42px; height: 22px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #555; transition: 0.4s; border-radius: 9999px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 2px; bottom: 2px; background-color: white; transition: 0.4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #38a169; }
-        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.light .post-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Light Mode Text Colors - IMPROVED */
+        body.light .text-gray-200 {
+            color: #374151;
+        }
+
+        body.light .text-gray-400 {
+            color: #6b7280;
+        }
+
+        body.light .text-white {
+            color: #1f2937 !important;
+        }
+
+        body.light .navbar a {
+            color: #4b5563;
+        }
+
+        body.light .navbar a:hover {
+            color: #111827;
+        }
+
+        body.light .logout-btn {
+            color: #1f2937;
+            border-color: #6b7280;
+        }
+
+        body.light .logout-btn:hover {
+            background-color: #1f2937;
+            color: #fff;
+        }
+
+        /* Profile & Post Image Borders */
+        .profile-img {
+            width: 48px;
+            /* Added Size */
+            height: 48px;
+            /* Added Size */
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid;
+            border-color: #d1d5db;
+            transition: border-color 0.3s ease;
+        }
+
+        body.dark .profile-img {
+            border-color: #d1d5db;
+        }
+
+        body.light .profile-img {
+            border-color: #4b5563;
+        }
+
+        .user-profile-pic {
+            width: 128px;
+            height: 128px;
+            border-radius: 50%;
+            border: 4px solid;
+            border-color: #4b5563;
+            transition: border-color 0.3s ease;
+            object-fit: cover;
+        }
+
+        body.dark .user-profile-pic {
+            border-color: #1d4ed8;
+        }
+
+        /* Like Button Color */
+        .like-btn .fa-heart.fa-solid {
+            color: #ef4444;
+        }
+
+        .like-btn .fa-heart.fa-regular {
+            color: #d1d5db;
+        }
+
+        body.light .like-btn .fa-heart.fa-regular {
+            color: #6b7280;
+        }
+
+        /* Input Fields Styling */
+        textarea,
+        input[type="text"] {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        body.light textarea,
+        body.light input[type="text"] {
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            color: #111827;
+        }
+
+        body.light textarea::placeholder,
+        body.light input[type="text"]::placeholder {
+            color: #9ca3af;
+        }
+
+        /* New Comment Styling */
+        body.dark .comments-section {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        body.light .comments-section {
+            background: rgba(243, 244, 246, 0.8);
+        }
+
+        body.dark .comment>div {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e6f0;
+        }
+
+        body.light .comment>div {
+            background: #d1d5db;
+            color: #1f2937;
+        }
+
+        /* New Comment Button Styling */
+        .comment-form button[type="submit"] {
+            background-color: #4f46e5;
+            color: #ffffff;
+            transition: background-color 0.3s ease;
+        }
+
+        .comment-form button[type="submit"]:hover {
+            background-color: #4338ca;
+        }
+
+        /* Image Modal Styling */
+        .image-modal-content {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Language Switcher Styling */
+        body.light .navbar select {
+            color: #1f2937;
+            border-color: #6b7280;
+            background-color: transparent;
+        }
+
+        body.light .navbar select:hover {
+            background-color: #1f2937;
+            color: #fff;
+        }
+
+        /* --- Corrected Switch CSS --- */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 42px;
+            height: 22px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #555;
+            transition: 0.4s;
+            border-radius: 9999px;
+        }
+
+        /* التنسيق الافتراضي (الوضع الفاتح) - الشمس على اليمين */
+        body.light .slider {
+            background-color: #38a169;
+        }
+
+        body.light .slider:before {
+            transform: translateX(20px);
+            content: "\f185";
+            font-size: 10px;
+            color: #38a169;
+        }
+
+        /* التنسيق عند التبديل (الوضع الداكن) - القمر على اليسار */
+        body.dark .slider {
+            background-color: #555;
+        }
+
+        body.dark .slider:before {
+            transform: translateX(0px);
+            content: "\f186";
+            font-size: 10px;
+            color: #1f2937;
+        }
+
+        /* تنسيق الأيقونة (العنصر المتحرك) بشكل عام */
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
+
+        /* الحركة عند التفعيل (تفعيل الوضع الداكن) */
+        input:checked + .slider {
+            background-color: #555;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(0px);
+        }
     </style>
 </head>
-<body class="dark flex flex-col min-h-screen">
 
-    <nav class="navbar p-4 flex justify-between items-center shadow-md flex-wrap gap-3 sticky top-0 z-50">
+<body class="light flex flex-col min-h-screen">
+
+    <button id="navbar-toggle-btn"
+        class="fixed top-4 right-4 z-50 bg-black/50 text-white p-3 rounded-full border-none cursor-pointer hover:bg-black/70 md:hidden"
+        aria-label="تبديل إظهار شريط التنقل">
+        <i class="fa-solid fa-bars fa-lg"></i>
+    </button>
+
+    <nav
+        class="navbar glass-effect p-4 flex justify-between items-center shadow-md flex-wrap gap-3 sticky top-0 z-50 transition-transform duration-300">
         <div class="flex items-center">
             <a href="{{ url_for('index') }}" class="flex items-center gap-2">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Terre_des_hommes_logo.svg/2560px-Terre_des_hommes_logo.svg.png" alt="شعار TDH" class="h-10" />
+                <img src="https://www.tdh.org/themes/custom/tailwinded/images/Logo_Tdh_english.svg"
+                    alt="شعار TDH" class="h-10 w-auto" />
                 <span class="text-white font-bold text-2xl select-none hidden md:block">TDH</span>
             </a>
         </div>
+
         <div class="flex-grow max-w-sm mx-4">
-            <div class="relative">
-                <input type="text" id="searchInput" placeholder="ابحث..." class="w-full pl-10 pr-4 py-2 rounded-full border-2 border-gray-600 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors" />
-                <i class="fa-solid fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
             </div>
-        </div>
+
         <div class="flex items-center gap-4 flex-wrap">
-            <a href="mailto:support@tdh.org" title="البريد الإلكتروني" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-envelope fa-lg"></i></a>
-            <a href="https://www.tdh.org" target="_blank" title="الموقع الرسمي" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-globe fa-lg"></i></a>
-            <a href="tel:+201234567890" title="خدمة العملاء" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-phone fa-lg"></i></a>
-            <a href="{{ url_for('centers') }}" class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">المراكز</a>
-            <a href="{{ url_for('my_profile') }}" class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none font-bold">ملفي الشخصي</a>
-            <a href="{{ url_for('logout') }}" class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">خروج</a>
-            <select id="languageSelector" aria-label="اختيار اللغة" title="اختيار اللغة" class="bg-transparent border-2 border-white text-white rounded-full p-2 text-sm cursor-pointer transition-colors hover:bg-white hover:text-gray-900">
+            <a href="mailto:support@tdh.org" title="البريد الإلكتروني"
+                class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-envelope fa-lg"></i></a>
+            <a href="https://www.tdh.org" target="_blank" title="الموقع الرسمي"
+                class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-globe fa-lg"></i></a>
+            <a href="tel:+201234567890" title="خدمة العملاء"
+                class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-phone fa-lg"></i></a>
+
+            <a href="{{ url_for('centers') }}"
+                class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">المراكز</a>
+            <a href="{{ url_for('my_profile') }}"
+                class="text-white hover:text-gray-300 px-3 py-1 rounded transition-colors select-none">الملف
+                الشخصي</a>
+            <a href="{{ url_for('logout') }}"
+                class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">خروج</a>
+
+            <select id="languageSelector" aria-label="اختيار اللغة" title="اختيار اللغة"
+                class="bg-transparent border-2 border-white text-white rounded-full p-2 text-sm cursor-pointer transition-colors hover:bg-white hover:text-gray-900">
                 <option value="ar" class="bg-gray-800 text-white" selected>العربية</option>
                 <option value="en" class="bg-gray-800 text-white">English</option>
+                <option value="ti" class="bg-gray-800 text-white">ትግርኛ</option>
+                <option value="am" class="bg-gray-800 text-white">አማርኛ</option>
+                <option value="de" class="bg-gray-800 text-white">Deutsch</option>
             </select>
-          <label class="switch" title="تبديل الوضع">
-            <input type="checkbox" id="themeToggle" />
-            <span class="slider"></span>
-        </label>
+
+            <label class="switch" title="تبديل الوضع">
+                <input type="checkbox" id="themeToggle" />
+                <span class="slider"></span>
+            </label>
         </div>
     </nav>
 
-    <main class="container mx-auto max-w-4xl px-4 py-8">
-        <section class="profile-card text-center rounded-2xl p-8 mb-12">
-            <img src="{{ user.profile_pic_url }}" alt="صورة الملف الشخصي" class="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full object-cover border-4 border-white/20 shadow-lg -mt-24 md:-mt-28">
-            <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 mt-4">
-                {{ user.username }}
-            </h1>
-            <p class="text-gray-400 mt-2 flex items-center justify-center gap-2 text-lg">
-                <i class="fas fa-graduation-cap"></i>
-                {% if user.training_course %}{{ user.training_course }}{% else %}لم يحدد دورة تدريبية{% endif %}
-            </p>
+    <main class="flex-grow container mx-auto px-4 py-20 md:py-24">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div
+            class="p-4 mb-4 text-sm rounded-lg {{ 'text-green-800 bg-green-50' if category == 'success' else 'text-yellow-800 bg-yellow-50' }} dark:bg-gray-800 {{ 'dark:text-green-400' if category == 'success' else 'dark:text-yellow-300' }}"
+            role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <section class="profile-section rounded-lg p-6 mb-8 text-center transition-colors duration-500 max-w-2xl mx-auto">
+            <div class="flex flex-col items-center">
+                <img src="{{ user.profile_pic_url }}" alt="صورة الملف الشخصي"
+                    class="user-profile-pic mb-4 object-cover">
+                <h1 class="text-3xl font-bold text-blue-400 mb-2">{{ user.username }}</h1>
+                <p class="text-gray-300 mb-2">{{ user.bio }}</p>
+                <p class="text-gray-400 text-sm">
+                    <i class="fa-solid fa-graduation-cap ml-1"></i>
+                    {{ user.training_course or "لا يوجد دورة تدريبية محددة." }}
+                </p>
+            </div>
         </section>
 
         <section class="user-posts">
-            <h2 class="text-3xl font-bold mb-6 pb-2 border-b-2 border-white/10 text-white">
-                منشورات {{ user.username }}
-            </h2>
-            <div id="posts-container" class="space-y-6">
+            <h2 class="text-2xl font-bold mb-4 text-center">منشورات {{ user.username }}</h2>
+            <div id="posts-container" class="space-y-6 flex flex-col items-center">
                 {% if user_posts %}
-                    {% for post in user_posts %}
-                        <article class="post-card rounded-xl p-5">
-                            <div class="flex justify-between items-center mb-2">
-                                <a href="{{ url_for('user_profile', user_id=post.user.id) }}" class="flex items-center gap-3 group">
-                                    <img src="{{ post.user.profile_pic_url }}" alt="صورة المستخدم" class="w-12 h-12 rounded-full object-cover">
-                                    <span class="font-bold text-white group-hover:text-cyan-400 transition-colors">{{ post.user.username }}</span>
-                                </a>
-                                <small class="text-gray-400 text-xs">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                {% for post in user_posts %}
+                <div class="post-card rounded-lg p-6 transition-colors duration-500 w-full md:max-w-3xl"
+                    data-post-id="{{ post.id }}">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center space-x-4 space-x-reverse">
+                            <img src="{{ post.user.profile_pic_url }}" alt="صورة الملف الشخصي"
+                                class="w-12 h-12 rounded-full object-cover profile-img">
+                            <div>
+                                <h3 class="font-bold">{{ post.user.username }}</h3>
+                                <p class="text-sm text-gray-400">{{
+                                    post.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
                             </div>
-                            <p class="my-4 text-gray-200 text-lg leading-relaxed body-text">{{ post.content }}</p>
-                            <div class="flex items-center gap-4 text-sm text-gray-400 border-t border-white/10 pt-3">
-                                <button class="like-btn {% if post.liked_by_user %}liked{% endif %}" data-post-id="{{ post.id }}">
-                                    <i class="fas fa-heart"></i> <span class="like-count">{{ post.likes }}</span>
-                                </button>
-                            </div>
-                        </article>
-                    {% endfor %}
-                {% else %}
-                    <div class="text-center text-gray-400 py-10 post-card">
-                        <p>لم ينشر المستخدم أي شيء بعد.</p>
+                        </div>
+                        {% if post.user_id == current_user.id or is_admin %}
+                        <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+                            <button type="submit"
+                                class="text-gray-400 hover:text-red-500 transition-colors duration-300"
+                                onclick="return confirm('هل أنت متأكد من حذف هذا المنشور؟')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                        {% endif %}
                     </div>
+                    <div class="post-content mb-4">
+                        <p class="text-gray-200 mb-4">{{ post.content }}</p>
+                        {% if post.image_url %}
+                        <img src="{{ post.image_url }}" alt="صورة المنشور"
+                            class="w-full h-auto max-h-[500px] object-contain rounded-lg shadow-lg mb-4 cursor-pointer image-modal-content"
+                            onclick="openImageModal('{{ post.image_url }}')">
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center justify-between text-gray-500">
+                        <div class="flex items-center space-x-4 space-x-reverse">
+                            <button class="like-btn flex items-center space-x-1 space-x-reverse focus:outline-none"
+                                data-post-id="{{ post.id }}">
+                                <i
+                                    class="fa-heart {% if post.id in liked_post_ids %}fa-solid{% else %}fa-regular{% endif %} text-lg transition-colors duration-300"></i>
+                                <span class="like-count text-sm">{{ post.likes }}</span>
+                            </button>
+                            <button class="comment-btn flex items-center space-x-1 space-x-reverse focus:outline-none"
+                                data-post-id="{{ post.id }}">
+                                <i class="fa-regular fa-comment text-lg"></i>
+                                <span class="comment-count text-sm">{{
+                                    post.comments|length }}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="comments-{{ post.id }}" class="comments-section mt-4 bg-gray-900/40 p-4 rounded-lg hidden">
+                        <h4 class="font-semibold mb-2 text-white">التعليقات</h4>
+                        <div class="space-y-3 mb-4 comment-list">
+                            {% for comment in post.comments %}
+                            <div class="comment flex items-start space-x-3 space-x-reverse">
+                                <img src="{{ comment.user.profile_pic_url }}"
+                                    class="w-8 h-8 rounded-full object-cover profile-img">
+                                <div class="bg-white/10 p-3 rounded-xl flex-1">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <p class="font-bold text-sm">{{
+                                            comment.user.username }}</p>
+                                        <p class="text-xs text-gray-400">الآن</p>
+                                    </div>
+                                    <p class="text-sm text-gray-200">{{
+                                        comment.content }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <form class="comment-form flex items-center gap-2 mt-4" data-post-id="{{ post.id }}">
+                            <input type="text" name="content" placeholder="أضف تعليقًا..."
+                                class="comment-input w-full p-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 placeholder-gray-400 text-sm">
+                            <button type="submit"
+                                class="bg-blue-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center hover:bg-blue-700 transition-colors duration-300">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="text-center text-gray-400 mt-10">
+                    <p>لم يتم نشر أي شيء بعد.</p>
+                </div>
                 {% endif %}
             </div>
         </section>
     </main>
 
-    <footer class="text-center py-8 text-sm text-gray-500 mt-12">
-        <p>&copy; 2024 TDH Community. جميع الحقوق محفوظة.</p>
-    </footer>
+    <div id="imageModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 p-4"
+        onclick="closeImageModal()">
+        <span class="absolute top-4 right-4 text-white text-4xl cursor-pointer">&times;</span>
+        <img id="modalImage" src="#" class="max-w-full max-h-full rounded-lg image-modal-content"
+            onclick="event.stopPropagation();">
+    </div>
 
     <script>
         const body = document.body;
         const themeToggle = document.getElementById('themeToggle');
         const searchInput = document.getElementById('searchInput');
-        const postsContainer = document.getElementById('posts-container');
-        
-        // قد لا تكون جميع المنشورات موجودة في هذه الصفحة، لذا يتم التعامل مع الخطأ
-        const allPosts = postsContainer ? postsContainer.querySelectorAll('.post-card') : [];
+        const allPosts = document.querySelectorAll('.post-card');
+        const navbar = document.querySelector('.navbar');
+        const navbarToggleBtn = document.getElementById('navbar-toggle-btn');
 
-        // تطبيق الوضع المفضل عند تحميل الصفحة
-        const storedTheme = localStorage.getItem('theme');
-        if (storedTheme === 'light') {
-            body.classList.add('light');
-            themeToggle.checked = true;
-        } else {
+        // Theme switching logic (UPDATED)
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        body.classList.add(savedTheme);
+        themeToggle.checked = savedTheme === 'dark';
+
+        // Apply theme immediately on page load
+        if (savedTheme === 'dark') {
+            body.classList.remove('light');
             body.classList.add('dark');
-            themeToggle.checked = false;
+        } else {
+            body.classList.remove('dark');
+            body.classList.add('light');
         }
 
-        // تغيير الوضع عند الضغط
         themeToggle.addEventListener('change', () => {
             if (themeToggle.checked) {
-                body.classList.replace('dark', 'light');
-                localStorage.setItem('theme', 'light');
-            } else {
                 body.classList.replace('light', 'dark');
                 localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.replace('dark', 'light');
+                localStorage.setItem('theme', 'light');
             }
         });
 
-        // كود البحث (سيعمل إذا كانت هناك منشورات في الصفحة)
-        if(searchInput && allPosts.length > 0) {
-            searchInput.addEventListener('input', () => {
-                const searchText = searchInput.value.toLowerCase().trim();
-                allPosts.forEach(post => {
-                    const postContent = post.querySelector('.body-text').textContent.toLowerCase();
-                    const postAuthor = post.querySelector('.font-bold').textContent.toLowerCase();
-                    if (postContent.includes(searchText) || postAuthor.includes(searchText)) {
-                        post.style.display = 'block';
-                    } else {
-                        post.style.display = 'none';
-                    }
-                });
+        // Search functionality with debounce
+        const debounce = (func, delay) => {
+            let timeoutId;
+            return (...args) => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    func.apply(this, args);
+                }, delay);
+            };
+        };
+
+        const handleSearch = () => {
+            const searchText = searchInput.value.toLowerCase().trim();
+            allPosts.forEach(post => {
+                const postContent = post.querySelector('.text-gray-200').textContent.toLowerCase();
+                const postAuthor = post.querySelector('.font-bold').textContent.toLowerCase();
+                if (postContent.includes(searchText) || postAuthor.includes(searchText)) {
+                    post.style.display = 'block';
+                } else {
+                    post.style.display = 'none';
+                }
             });
+        };
+
+        // Note: The search input is now removed from the HTML, so this part of the JS won't run.
+        if (searchInput && allPosts.length > 0) {
+            searchInput.addEventListener('input', debounce(handleSearch, 300));
         }
-        
-        // كود الإعجاب
+
+        // Image modal functionality
+        function openImageModal(imageUrl) {
+            const modalImage = document.getElementById('modalImage');
+            const imageModal = document.getElementById('imageModal');
+            modalImage.src = imageUrl;
+            imageModal.classList.remove('hidden');
+            body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const imageModal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            imageModal.classList.add('hidden');
+            modalImage.src = '';
+            document.body.style.overflow = '';
+        }
+
+        window.openImageModal = openImageModal;
+        window.closeImageModal = closeImageModal;
+
+        // AJAX for like and comment buttons
         document.querySelectorAll('.like-btn').forEach(button => {
-            button.addEventListener('click', async () => {
-                // ... الكود الخاص بالإعجاب ...
+            button.addEventListener('click', async (event) => {
+                event.preventDefault();
+                const postId = event.currentTarget.dataset.postId;
+                const likeCountElement = event.currentTarget.querySelector('.like-count');
+                const likeIcon = event.currentTarget.querySelector('.fa-heart');
+                try {
+                    const response = await fetch(`/like/${postId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        likeCountElement.textContent = data.likes;
+                        if (data.liked) {
+                            likeIcon.classList.replace('fa-regular', 'fa-solid');
+                        } else {
+                            likeIcon.classList.replace('fa-solid', 'fa-regular');
+                        }
+                    } else {
+                        alert('حدث خطأ: ' + (data.error || 'غير معروف'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('حدث خطأ في الاتصال بالخادم.');
+                }
             });
         });
 
-        // كود محدد اللغة
-        document.getElementById('languageSelector').addEventListener('change', (e) => {
-            alert('تم اختيار اللغة: ' + e.target.value);
+        document.querySelectorAll('.comment-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
+                const postId = event.currentTarget.dataset.postId;
+                const commentsSection = document.getElementById(`comments-${postId}`);
+                if (commentsSection) {
+                    commentsSection.classList.toggle('hidden');
+                }
+            });
         });
+
+        document.querySelectorAll('.comment-form').forEach(form => {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const postId = event.target.dataset.postId;
+                const commentInput = event.target.querySelector('.comment-input');
+                const content = commentInput.value.trim();
+                if (!content) return;
+
+                const formData = new FormData();
+                formData.append('content', content);
+
+                try {
+                    const response = await fetch(`/comment/${postId}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        const commentsList = document.getElementById(`comments-${postId}`).querySelector('.comment-list');
+                        const newCommentHtml = `
+                                <div class="comment flex items-start space-x-3 space-x-reverse">
+                                    <img src="{{ current_user.profile_pic_url }}" class="w-8 h-8 rounded-full object-cover profile-img">
+                                    <div class="bg-white/10 p-3 rounded-xl flex-1">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <p class="font-bold text-sm">{{ current_user.username }}</p>
+                                            <p class="text-xs text-gray-400">الآن</p>
+                                        </div>
+                                        <p class="text-sm text-gray-200">${content}</p>
+                                    </div>
+                                </div>`;
+                        commentsList.innerHTML += newCommentHtml;
+                        commentInput.value = '';
+                    } else {
+                        alert('حدث خطأ: ' + (data.message || 'غير معروف'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('حدث خطأ في الاتصال بالخادم.');
+                }
+            });
+        });
+
+        // Hide/show navbar logic
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth >= 768) { // For larger screens, navbar is always visible
+                navbar.style.transform = 'translateY(0)';
+                if (navbarToggleBtn) navbarToggleBtn.style.display = 'none';
+                return;
+            }
+
+            if (window.scrollY > lastScrollY && window.scrollY > 100) {
+                navbar.style.transform = 'translateY(-100%)';
+                if (navbarToggleBtn) navbarToggleBtn.style.display = 'block';
+            } else {
+                navbar.style.transform = 'translateY(0)';
+                if (navbarToggleBtn) navbarToggleBtn.style.display = 'block';
+            }
+            lastScrollY = window.scrollY;
+        });
+
+        if (navbarToggleBtn) {
+            navbarToggleBtn.addEventListener('click', () => {
+                if (navbar.style.transform === 'translateY(0px)' || !navbar.style.transform) {
+                    navbar.style.transform = 'translateY(-100%)';
+                } else {
+                    navbar.style.transform = 'translateY(0)';
+                }
+            });
+        }
     </script>
 </body>
+
 </html>
