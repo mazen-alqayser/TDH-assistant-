@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>UMAI TDH</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -16,7 +16,7 @@
     <style>
         body {
             font-family: 'Inter', 'Cairo', sans-serif;
-            overflow-y: auto;
+            overflow: hidden; /* Prevent body scroll */
         }
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
@@ -60,19 +60,56 @@
 
         /* --- START: Custom Scrollbar (Gemini Style) --- */
         #chat-box-container::-webkit-scrollbar {
-            width: 8px; /* عرض شريط التمرير */
+            width: 8px;
         }
         #chat-box-container::-webkit-scrollbar-track {
-            background: transparent; /* مسار شفاف */
+            background: transparent;
         }
         #chat-box-container::-webkit-scrollbar-thumb {
-            background-color: rgba(136, 136, 136, 0.5); /* لون شريط التمرير */
-            border-radius: 10px; /* حواف دائرية */
+            background-color: rgba(136, 136, 136, 0.5);
+            border-radius: 10px;
         }
         #chat-box-container::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(136, 136, 136, 0.8); /* لون الشريط عند التمرير */
+            background-color: rgba(136, 136, 136, 0.8);
         }
         /* --- END: Custom Scrollbar --- */
+        
+        /* CORE FIX FOR MOBILE KEYBOARD */
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            /* Height will be set by JavaScript */
+            height: 100%; 
+            -webkit-overflow-scrolling: touch;
+        }
+        #chat-container > header, #chat-container > .input-area {
+            flex-shrink: 0; /* Prevent header and input from shrinking */
+        }
+        #chat-box-container {
+            flex-grow: 1; /* Allow chat-box to take remaining space */
+            overflow-y: auto;
+        }
+        
+        /* General responsive adjustments for better UI on all devices */
+        @media (max-width: 768px) {
+            .p-4 { padding: 1rem; }
+            .p-6 { padding: 1.5rem; }
+            .text-6xl { font-size: 3rem; }
+            .text-5xl { font-size: 2.5rem; }
+            .text-4xl { font-size: 2rem; }
+            .text-3xl { font-size: 1.5rem; }
+            .text-2xl { font-size: 1.25rem; }
+            .text-xl { font-size: 1.1rem; }
+            .text-base { font-size: 0.9rem; }
+            .text-sm { font-size: 0.8rem; }
+            .w-10, .h-10 { width: 2.5rem; height: 2.5rem; }
+            .w-8, .h-8 { width: 2rem; height: 2rem; }
+            .w-7, .h-7 { width: 1.75rem; height: 1.75rem; }
+
+            .input-area {
+                padding: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col h-screen overflow-hidden">
@@ -102,7 +139,7 @@
     </button>
 </div>
 
-<div id="chat-container" class="chat-container flex-col h-full max-w-4xl mx-auto w-full p-4 hidden opacity-0 transition-opacity duration-500">
+<div id="chat-container" class="flex-col h-full max-w-4xl mx-auto w-full p-4 hidden opacity-0 transition-opacity duration-500">
     <header class="flex items-center justify-between p-4 border-b border-gray-700 flex-shrink-0">
         <div class="flex items-center gap-4">
             <a href="/" class="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800 transition-colors">
@@ -129,7 +166,7 @@
                     <i class="fa-solid fa-ellipsis-vertical"></i>
                 </button>
                 <div class="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg hidden group-focus-within:block group-hover:block z-10">
-                    <a id="emailButton" href="egy.contact@tdh.ch" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                    <a id="emailButton" href="mailto:egy.contact@tdh.ch" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
                         <i class="fa-solid fa-envelope w-4"></i>
                         <span>البريد الإلكتروني</span>
                     </a>
@@ -243,33 +280,25 @@
         }
     }
 
-    // show chat when splash start clicked (animation handled here)
     function showChatContainer() {
         splashScreen.classList.add('opacity-0');
         setTimeout(() => {
             splashScreen.style.display = 'none';
             chatContainer.classList.remove('hidden', 'opacity-0');
             chatContainer.classList.add('flex');
+            // Call the height adjustment function once the chat is visible
+            adjustHeight(); 
         }, 700);
     }
 
-    // play sound then show
     function playStartSoundAndShowChat() {
         const startSound = document.getElementById("start-sound");
         startSound.play().catch(() => {});
         showChatContainer();
     }
-
-    // also allow clicking the button via event listener (redundant but safe)
-    startChatBtn.addEventListener('click', () => {
-        // nothing here because onclick already calls playStartSoundAndShowChat
-        // but leave for safety if user triggers via keyboard or other event
-        // (no loop/call to startChatBtn.click() to avoid recursion)
-    });
-
+    
     languageSelect.addEventListener("change", (e) => changeLanguage(e.target.value));
-    window.addEventListener("DOMContentLoaded", () => changeLanguage(languageSelect.value));
-
+    
     questionInput.addEventListener("input", () => {
         questionInput.style.height = "auto";
         questionInput.style.height = (questionInput.scrollHeight) + "px";
@@ -294,7 +323,6 @@
         const tempBotMessage = appendMessage("bot", "...");
 
         try {
-            // هنا تُرسل الطلب للخادم. في بيئتك المحلية قد تحتاج لتعديل المسار.
             const response = await fetch("/api/ask", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -302,7 +330,7 @@
             });
             if (!response.ok) throw new Error("Network response was not ok.");
             const data = await response.json();
-            updateLastBotMessage(data.answer || "(لا يوجد رد من الخادم)", tempBotMessage);
+            updateLastBotMessage(data.answer || "(No response from server)", tempBotMessage);
         } catch (e) {
             const errorText = (translations[langKey] || translations['en-US']).error;
             updateLastBotMessage(errorText, tempBotMessage);
@@ -354,17 +382,15 @@
         
         msgContainer.appendChild(messageWrapper);
         chatBox.appendChild(msgContainer);
-        // scroll to bottom
         chatBoxContainer.scrollTo({ top: chatBoxContainer.scrollHeight, behavior: "smooth" });
         return msgContainer;
     }
 
     function updateLastBotMessage(newText, messageElement) {
         if (!messageElement) return;
-        // messageElement is the container returned by appendMessage
         const messageWrapper = messageElement.querySelector("div");
         if (!messageWrapper) return;
-        messageWrapper.innerHTML = ''; // Clear loading animation
+        messageWrapper.innerHTML = ''; 
 
         const textP = document.createElement('p');
         textP.className = 'text-white';
@@ -388,11 +414,9 @@
 
         messageWrapper.appendChild(textP);
         messageWrapper.appendChild(buttonsContainer);
-
         chatBoxContainer.scrollTo({ top: chatBoxContainer.scrollHeight, behavior: "smooth" });
     }
 
-    // قراءة النص صوتياً
     function readText(elementToRead) {
         if (currentUtterance) {
             window.speechSynthesis.cancel();
@@ -416,11 +440,10 @@
         }
     }
 
-    // التعرف على الصوت
     let recognition = null;
     function startSpeechRecognition() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            alert('متصفحك لا يدعم التعرف على الصوت');
+            alert('Your browser does not support speech recognition');
             return;
         }
         if (recognition) {
@@ -443,6 +466,25 @@
         recognition.onerror = (event) => { console.error("Speech recognition error", event.error); };
         recognition.onend = () => { recognition = null; };
     }
+
+    // =========================================================
+    // START: THE FIX FOR MOBILE KEYBOARD
+    // =========================================================
+    function adjustHeight() {
+        const vh = window.innerHeight;
+        document.body.style.height = `${vh}px`;
+    }
+
+    // Adjust height on load and when the window is resized
+    window.addEventListener('resize', adjustHeight);
+    window.addEventListener('DOMContentLoaded', () => {
+        adjustHeight();
+        changeLanguage(languageSelect.value);
+    });
+    // =========================================================
+    // END: THE FIX
+    // =========================================================
+
 </script>
 
 </body>
