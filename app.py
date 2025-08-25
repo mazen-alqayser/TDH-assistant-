@@ -458,7 +458,31 @@ def comment_post(post_id):
 
     flash("✅ تم إضافة تعليقك بنجاح", "success")
     return redirect(url_for("view_post", post_id=post_id))
+# الكود الصحيح الذي يجب أن تستخدمه
+@app.route("/view_post/<int:post_id>", methods=["GET", "POST"])
+@login_required
+def view_post(post_id):
+    post = Post.query.get_or_404(post_id)
 
+    # أضف هذا الجزء للتعامل مع طلبات POST
+    if request.method == "POST":
+        content = request.form.get("content", "").strip()
+        if not content:
+            flash("⚠️ لا يمكن إضافة تعليق فارغ.", "warning")
+        else:
+            new_comment = Comment(post_id=post.id, user_id=g.user.id, content=content)
+            db.session.add(new_comment)
+            db.session.commit()
+            flash("✅ تم إضافة تعليقك بنجاح.", "success")
+        return redirect(url_for("view_post", post_id=post_id))
+
+    # هذا الجزء سيتم تنفيذه عند طلب GET
+    comments = Comment.query.filter_by(post_id=post_id).order_by(Comment.timestamp.desc()).all()
+    liked_post_ids = {like.post_id for like in g.user.likes}
+    return render_template("view_post.html",
+                           post=post,
+                           comments=comments,
+                           liked_post_ids=liked_post_ids)
 
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
