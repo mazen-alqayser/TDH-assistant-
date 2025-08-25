@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ post.user.username }} - TDH</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body { font-family: "Cairo", sans-serif; }
+        .post-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+        }
+        body.light .post-card { background: #fff; }
+        .profile-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .post-image { max-width: 100%; border-radius: 8px; margin-top: 1rem; }
+        .like-btn.liked { color: #ef4444; }
+        .like-btn.not-liked { color: #d1d5db; }
+
+        .back-button-in-post {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4f46e5, #8b5cf6);
+            color: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            z-index: 10;
+        }
+        .back-button-in-post:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+        .back-button-in-post i {
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+<body class="{% if theme == 'dark' %}dark{% else %}light{% endif %} flex flex-col min-h-screen">
+
+    <main class="flex-grow container mx-auto p-4 max-w-3xl">
+        <div class="post-card rounded-lg p-5">
+
+            <a href="javascript:history.back()" class="back-button-in-post">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+            <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
+                <div class="flex items-center gap-3">
+                    <a href="{{ url_for('user_profile', user_id=post.user.id) }}">
+                        <img src="{{ post.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" class="profile-img" alt="صورة الملف الشخصي" />
+                    </a>
+                    <p class="font-bold flex items-center gap-1">
+                        {{ post.user.username }}
+                        {% if post.user.is_admin %}
+                        <i class="fa-solid fa-check-circle text-blue-500"></i>
+                        {% endif %}
+                    </p>
+                </div>
+                <small class="text-gray-400 text-xs">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+            </div>
+
+            {% if post.image_url %}
+            <img src="{{ post.image_url }}" alt="صورة المنشور" class="post-image" />
+            {% endif %}
+
+            <p class="mt-4 text-lg">{{ post.content }}</p>
+
+            <div class="flex items-center gap-4 mt-4">
+                <button data-post-id="{{ post.id }}" class="like-btn {% if post.id in liked_post_ids %}liked{% else %}not-liked{% endif %}">
+                    <i class="fa-solid fa-heart"></i>
+                    <span class="like-count ml-1">{{ post.likes }}</span>
+                </button>
+            </div>
+
+            <div id="comments-container" class="mt-6 space-y-3">
+                <h3 class="font-bold">التعليقات ({{ post.comments|length }})</h3>
+                {% for comment in post.comments %}
+                <div class="bg-white/10 p-3 rounded-lg text-sm flex flex-col gap-2" id="comment-{{ comment.id }}">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-2">
+                            <img src="{{ comment.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" class="w-8 h-8 rounded-full object-cover" />
+                            <div>
+                                <strong class="font-semibold">{{ comment.user.username }}:</strong>
+                                <p class="inline">{{ comment.content }}</p>
+                            </div>
+                        </div>
+                        <small class="text-gray-400 text-xs mt-1">{{ comment.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                    </div>
+
+                    <div class="flex items-center gap-4 text-sm">
+                        <button class="like-comment-btn text-gray-400 hover:text-red-500" data-comment-id="{{ comment.id }}">
+                            <i class="fa-solid fa-heart"></i>
+                            <span class="like-count">{{ comment.likes }}</span>
+                        </button>
+                        <button class="reply-comment-btn text-gray-400 hover:text-blue-500" data-comment-id="{{ comment.id }}">
+                            <i class="fa-solid fa-reply"></i> رد
+                        </button>
+                    </div>
+
+                    <div class="replies-container ml-6 mt-2 space-y-2">
+                        {% for reply in comment.replies %}
+                        <div class="bg-white/20 p-2 rounded-lg text-sm flex justify-between items-start">
+                            <div class="flex items-center gap-2">
+                                <img src="{{ reply.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" class="w-7 h-7 rounded-full object-cover" />
+                                <div>
+                                    <strong class="font-semibold">{{ reply.user.username }}:</strong>
+                                    <p class="inline">{{ reply.content }}</p>
+                                </div>
+                            </div>
+                            <small class="text-gray-400 text-xs mt-1">{{ reply.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <form class="reply-form hidden mt-2 flex gap-2" data-comment-id="{{ comment.id }}">
+                        <textarea name="content" required class="flex-grow p-2 rounded-lg bg-white/20 text-white placeholder-gray-400 focus:outline-none resize-none" placeholder="اكتب ردًا..." rows="1"></textarea>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg font-bold">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+
+            <form action="{{ url_for('comment_post', post_id=post.id) }}" method="POST" class="mt-4 flex gap-2">
+                <textarea name="content" required class="flex-grow p-3 rounded-lg bg-white/20 text-white placeholder-gray-400 focus:outline-none resize-none" placeholder="اكتب تعليقًا..." rows="1"></textarea>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-bold">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".like-comment-btn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const commentId = btn.dataset.commentId;
+                const response = await fetch(`/like_comment/${commentId}`, { method: "POST" });
+                if(response.ok){
+                    const data = await response.json();
+                    btn.querySelector(".like-count").textContent = data.likes;
+                }
+            });
+        });
+
+        document.querySelectorAll(".reply-comment-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const commentId = btn.dataset.commentId;
+                const form = document.querySelector(`.reply-form[data-comment-id="${commentId}"]`);
+                form.classList.toggle("hidden");
+                form.querySelector("textarea").focus();
+            });
+        });
+
+        document.querySelectorAll(".reply-form").forEach(form => {
+            form.addEventListener("submit", async e => {
+                e.preventDefault();
+                const commentId = form.dataset.commentId;
+                const content = form.content.value;
+                if(!content.trim()) return;
+
+                const response = await fetch(`/reply_comment/${commentId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                    body: JSON.stringify({ content })
+                });
+
+                if(response.ok){
+                    const data = await response.json();
+                    const repliesContainer = form.previousElementSibling;
+                    const replyDiv = document.createElement("div");
+                    replyDiv.className = "bg-white/20 p-2 rounded-lg text-sm flex justify-between items-start";
+                    replyDiv.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <img src="${data.user.profile_pic_url || 'https://tdh.org/images/default-profile-pic.png'}" class="w-7 h-7 rounded-full object-cover" />
+                            <div>
+                                <strong class="font-semibold">${data.user.username}:</strong>
+                                <p class="inline">${data.content}</p>
+                            </div>
+                        </div>
+                        <small class="text-gray-400 text-xs mt-1">${data.timestamp}</small>
+                    `;
+                    repliesContainer.appendChild(replyDiv);
+                    form.content.value = "";
+                    form.classList.add("hidden");
+                } else {
+                    alert("حدث خطأ أثناء إرسال الرد.");
+                }
+            });
+        });
+    });
+    </script>
+
+</body>
+</html>
