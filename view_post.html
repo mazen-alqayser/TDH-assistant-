@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ post.user.username }} - TDH</title>
+    <title>منشور {{ post.user.username }} - TDH</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,41 +12,96 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        body { font-family: "Cairo", sans-serif; }
-        .post-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            position: relative;
+        /* CSS موحد من الصفحة الرئيسية لضمان تناسق المظهر */
+        :root {
+            --font-main: "Cairo", sans-serif;
+            --font-alt: "Amiri", serif;
         }
-        body.light .post-card { background: #fff; }
-        .profile-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+
+        body {
+            font-family: var(--font-main);
+            min-height: 100vh;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            background-size: 400% 400%;
+            animation: bgMove 20s ease infinite;
+        }
+
+        body.dark {
+            background: linear-gradient(-45deg, #0a1128, #1a2a51, #0a1128, #1a2a51);
+            color: #e0e6f0;
+        }
+
+        body.light {
+            background: linear-gradient(-45deg, #f3f4f6, #e5e7eb, #f3f4f6, #e5e7eb);
+            color: #1f2937;
+        }
+
+        @keyframes bgMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .post-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light .post-card {
+            background: #ffffff;
+            backdrop-filter: none;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-img {
+            width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
+            border: 2px solid #9ca3af;
+        }
+        body.light .profile-img { border-color: #4b5563; }
+
         .post-image { max-width: 100%; border-radius: 8px; margin-top: 1rem; }
+        
         .like-btn.liked { color: #ef4444; }
         .like-btn.not-liked { color: #d1d5db; }
+        body.light .like-btn.not-liked { color: #6b7280; }
 
-        .back-button-in-post {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #4f46e5, #8b5cf6);
+        .verified-badge { color: #34d399; font-size: 0.9em; }
+
+        textarea {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
-            border-radius: 50%;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease-in-out;
-            z-index: 10;
         }
-        .back-button-in-post:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        body.light textarea {
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            color: #111827;
         }
-        .back-button-in-post i {
-            font-size: 1.25rem;
+        body.light textarea::placeholder { color: #9ca3af; }
+
+        /* تنسيقات مخصصة للتعليقات والردود */
+        .comment-card, .reply-card {
+            transition: background-color 0.3s ease;
+        }
+
+        .comment-card { background-color: rgba(255, 255, 255, 0.07); }
+        .reply-card { background-color: rgba(0, 0, 0, 0.15); }
+
+        body.light .comment-card { background-color: #f9fafb; border: 1px solid #e5e7eb; }
+        body.light .reply-card { background-color: #f3f4f6; border: 1px solid #e5e7eb; }
+        
+        /* ألوان النصوص داخل البطاقات في الوضع الفاتح */
+        body.light .comment-card strong, body.light .reply-card strong { color: #111827; }
+        body.light .comment-card p, body.light .reply-card p { color: #374151; }
+        body.light .text-gray-200 { color: #4b5563; }
+        body.light .text-gray-400 { color: #6b7280; }
+        body.light .text-white { color: #1f2937 !important; }
+
+        body.light .reply-card strong, body.light .reply-card p {
+            color: #1f2937 !important;
         }
     </style>
 </head>
@@ -55,81 +110,80 @@
     <main class="flex-grow container mx-auto p-4 max-w-3xl">
         <div class="post-card rounded-lg p-5">
 
-            <a href="javascript:history.back()" class="back-button-in-post">
-                <i class="fa-solid fa-arrow-left"></i>
-            </a>
-
-            <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
-                <div class="flex items-center gap-3">
-                    <a href="{{ url_for('user_profile', user_id=post.user.id) }}">
-                        <img src="{{ post.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" class="profile-img" alt="صورة الملف الشخصي" />
+            <div class="flex justify-between items-center mb-4 flex-wrap gap-y-2">
+                <div class="flex items-center gap-4">
+                    <a href="{{ url_for('index') }}" class="text-gray-400 hover:text-white transition-colors" title="العودة للصفحة الرئيسية">
+                        <i class="fa-solid fa-arrow-right fa-lg"></i>
                     </a>
-                    <p class="font-bold flex items-center gap-1">
-                        {{ post.user.username }}
-                        {% if post.user.is_admin %}
-                        <i class="fa-solid fa-check-circle text-blue-500"></i>
-                        {% endif %}
-                    </p>
+                    <div class="flex items-center gap-3">
+                        <a href="{{ url_for('user_profile', user_id=post.user.id) }}">
+                            <img src="{{ post.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" class="profile-img" alt="صورة الملف الشخصي" />
+                        </a>
+                        <div>
+                             <p class="font-bold flex items-center gap-1 text-lg text-white">
+                                 {{ post.user.username }}
+                                 {% if post.user.is_admin %}
+                                 <i class="fa-solid fa-check-circle verified-badge" title="حساب موثق"></i>
+                                 {% endif %}
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <small class="text-gray-400 text-xs">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
             </div>
+            <p class="my-4 text-gray-200 text-lg">{{ post.content }}</p>
 
             {% if post.image_url %}
             <img src="{{ post.image_url }}" alt="صورة المنشور" class="post-image" />
             {% endif %}
 
-            <p class="mt-4 text-lg">{{ post.content }}</p>
-
-            <div class="flex items-center gap-4 mt-4">
-                <button data-post-id="{{ post.id }}" class="like-btn {% if post.id in liked_post_ids %}liked{% else %}not-liked{% endif %}">
+            <div class="flex items-center gap-4 mt-4 border-t border-white/10 pt-3">
+                <button data-post-id="{{ post.id }}" class="like-btn {% if post.id in liked_post_ids %}liked{% else %}not-liked{% endif %} transition-colors">
                     <i class="fa-solid fa-heart"></i>
                     <span class="like-count ml-1">{{ post.likes }}</span>
                 </button>
             </div>
 
-            <div id="comments-container" class="mt-6 space-y-3">
-                <h3 class="font-bold">التعليقات ({{ post.comments|length }})</h3>
+            <div id="comments-container" class="mt-6 space-y-4">
+                <h3 class="font-bold text-white text-xl border-b border-white/10 pb-2">التعليقات (<span id="comments-count">{{ post.comments|length }}</span>)</h3>
                 {% for comment in post.comments %}
-                <div class="bg-white/10 p-3 rounded-lg text-sm flex flex-col gap-2" id="comment-{{ comment.id }}">
+                <div class="comment-card p-3 rounded-lg flex flex-col gap-2" id="comment-{{ comment.id }}">
                     <div class="flex justify-between items-start">
                         <div class="flex items-center gap-2">
                             <img src="{{ comment.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" class="w-8 h-8 rounded-full object-cover" />
                             <div>
-                                <strong class="font-semibold">{{ comment.user.username }}:</strong>
-                                <p class="inline">{{ comment.content }}</p>
+                                <strong class="font-semibold text-white">{{ comment.user.username }}:</strong>
+                                <p class="inline text-gray-200">{{ comment.content }}</p>
                             </div>
                         </div>
-                        <small class="text-gray-400 text-xs mt-1">{{ comment.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                        <small class="text-gray-400 text-xs mt-1 shrink-0 ml-2">{{ comment.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
                     </div>
-
-                    <div class="flex items-center gap-4 text-sm">
-                        <button class="like-comment-btn text-gray-400 hover:text-red-500" data-comment-id="{{ comment.id }}">
+                    <div class="flex items-center gap-4 text-xs text-gray-400">
+                        <button class="like-comment-btn hover:text-red-500 transition-colors" data-comment-id="{{ comment.id }}">
                             <i class="fa-solid fa-heart"></i>
-                            <span class="like-count">{{ comment.likes }}</span>
+                            <span class="like-count">{{ comment.likes }}</span> إعجاب
                         </button>
-                        <button class="reply-comment-btn text-gray-400 hover:text-blue-500" data-comment-id="{{ comment.id }}">
+                        <button class="reply-comment-btn hover:text-blue-500 transition-colors" data-comment-id="{{ comment.id }}">
                             <i class="fa-solid fa-reply"></i> رد
                         </button>
                     </div>
-
-                    <div class="replies-container ml-6 mt-2 space-y-2">
+                    <div class="replies-container mr-8 mt-2 space-y-2 border-r-2 border-white/10 pr-3">
                         {% for reply in comment.replies %}
-                        <div class="bg-white/20 p-2 rounded-lg text-sm flex justify-between items-start">
+                        <div class="reply-card p-2 rounded-lg text-sm flex justify-between items-start">
                             <div class="flex items-center gap-2">
                                 <img src="{{ reply.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" class="w-7 h-7 rounded-full object-cover" />
                                 <div>
-                                    <strong class="font-semibold">{{ reply.user.username }}:</strong>
-                                    <p class="inline">{{ reply.content }}</p>
+                                    <strong class="font-semibold text-white">{{ reply.user.username }}:</strong>
+                                    <p class="inline text-gray-200">{{ reply.content }}</p>
                                 </div>
                             </div>
-                            <small class="text-gray-400 text-xs mt-1">{{ reply.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                            <small class="text-gray-400 text-xs mt-1 shrink-0 ml-2">{{ reply.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
                         </div>
                         {% endfor %}
                     </div>
-
                     <form class="reply-form hidden mt-2 flex gap-2" data-comment-id="{{ comment.id }}">
-                        <textarea name="content" required class="flex-grow p-2 rounded-lg bg-white/20 text-white placeholder-gray-400 focus:outline-none resize-none" placeholder="اكتب ردًا..." rows="1"></textarea>
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg font-bold">
+                        <textarea name="content" required class="flex-grow p-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" placeholder="اكتب ردًا..." rows="1"></textarea>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1 rounded-lg font-bold transition-colors">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </form>
@@ -137,26 +191,161 @@
                 {% endfor %}
             </div>
 
-            <form action="{{ url_for('comment_post', post_id=post.id) }}" method="POST" class="mt-4 flex gap-2">
-                <textarea name="content" required class="flex-grow p-3 rounded-lg bg-white/20 text-white placeholder-gray-400 focus:outline-none resize-none" placeholder="اكتب تعليقًا..." rows="1"></textarea>
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-bold">
+            <form id="main-comment-form" class="mt-6 flex gap-2">
+                <textarea name="content" required class="flex-grow p-3 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none" placeholder="اكتب تعليقًا..." rows="1"></textarea>
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-bold transition-colors">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </form>
-        </div>
+            </div>
     </main>
 
     <script>
     document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll(".like-comment-btn").forEach(btn => {
-            btn.addEventListener("click", async () => {
-                const commentId = btn.dataset.commentId;
-                const response = await fetch(`/like_comment/${commentId}`, { method: "POST" });
-                if(response.ok){
+        const theme = document.body.classList.contains('dark') ? 'dark' : 'light';
+        
+        // --- وظيفة موحدة لمعالجة طلبات الإعجاب بالمنشورات والتعليقات والردود
+        async function handleLike(url, button) {
+            try {
+                const response = await fetch(url, { method: "POST" });
+                if (response.ok) {
                     const data = await response.json();
-                    btn.querySelector(".like-count").textContent = data.likes;
+                    const likeCountSpan = button.querySelector(".like-count");
+                    if (likeCountSpan) {
+                        likeCountSpan.textContent = data.likes;
+                    }
+
+                    // تحديث حالة زر الإعجاب للمنشور الرئيسي
+                    if (button.classList.contains("like-btn")) {
+                        if (data.liked) {
+                            button.classList.add("liked");
+                            button.classList.remove("not-liked");
+                        } else {
+                            button.classList.add("not-liked");
+                            button.classList.remove("liked");
+                        }
+                    }
+                } else {
+                    console.error("Failed to like:", response.status);
                 }
-            });
+            } catch (error) {
+                console.error("Network error:", error);
+            }
+        }
+
+        // --- وظيفة موحدة لإرسال الردود والتعليقات
+        async function handleSubmit(url, form, repliesContainer) {
+            const content = form.content.value.trim();
+            if (!content) return;
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+                    body: JSON.stringify({ content })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    const newElementDiv = document.createElement("div");
+                    let innerHTML;
+                    let isComment = form.id === 'main-comment-form';
+
+                    if (isComment) {
+                        newElementDiv.className = "comment-card p-3 rounded-lg flex flex-col gap-2";
+                        newElementDiv.id = `comment-${data.comment_id}`;
+                        
+                        const textColorClass = theme === 'dark' ? 'text-gray-200' : 'text-gray-600';
+                        const strongColorClass = theme === 'dark' ? 'text-white' : 'text-gray-900';
+
+                        innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center gap-2">
+                                    <img src="${data.user.profile_pic_url || 'https://tdh.org/images/default-profile-pic.png'}" class="w-8 h-8 rounded-full object-cover" />
+                                    <div>
+                                        <strong class="font-semibold ${strongColorClass}">${data.user.username}:</strong>
+                                        <p class="inline ${textColorClass}">${data.content}</p>
+                                    </div>
+                                </div>
+                                <small class="text-gray-400 text-xs mt-1 shrink-0 ml-2">${data.timestamp}</small>
+                            </div>
+                            <div class="flex items-center gap-4 text-xs text-gray-400">
+                                <button class="like-comment-btn hover:text-red-500 transition-colors" data-comment-id="${data.comment_id}">
+                                    <i class="fa-solid fa-heart"></i> <span class="like-count">0</span> إعجاب
+                                </button>
+                                <button class="reply-comment-btn hover:text-blue-500 transition-colors" data-comment-id="${data.comment_id}">
+                                    <i class="fa-solid fa-reply"></i> رد
+                                </button>
+                            </div>
+                            <div class="replies-container mr-8 mt-2 space-y-2 border-r-2 border-white/10 pr-3"></div>
+                            <form class="reply-form hidden mt-2 flex gap-2" data-comment-id="${data.comment_id}">
+                                <textarea name="content" required class="flex-grow p-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" placeholder="اكتب ردًا..." rows="1"></textarea>
+                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1 rounded-lg font-bold transition-colors">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        `;
+                        const commentsContainer = document.getElementById("comments-container");
+                        commentsContainer.appendChild(newElementDiv);
+                        const countSpan = document.getElementById('comments-count');
+                        countSpan.textContent = parseInt(countSpan.textContent) + 1;
+
+                    } else { // إنه رد
+                        newElementDiv.className = "reply-card p-2 rounded-lg text-sm flex justify-between items-start";
+                        
+                        const textColorClass = theme === 'dark' ? 'text-gray-200' : 'text-gray-600';
+                        const strongColorClass = theme === 'dark' ? 'text-white' : 'text-gray-900';
+
+                        innerHTML = `
+                            <div class="flex items-center gap-2">
+                                <img src="${data.user.profile_pic_url || 'https://tdh.org/images/default-profile-pic.png'}" class="w-7 h-7 rounded-full object-cover" />
+                                <div>
+                                    <strong class="font-semibold ${strongColorClass}">${data.user.username}:</strong>
+                                    <p class="inline ${textColorClass}">${data.content}</p>
+                                </div>
+                            </div>
+                            <small class="text-gray-400 text-xs mt-1 shrink-0 ml-2">${data.timestamp}</small>
+                        `;
+                        repliesContainer.appendChild(newElementDiv);
+                    }
+                    
+                    newElementDiv.innerHTML = innerHTML;
+                    form.content.value = "";
+                    if (!isComment) {
+                        form.classList.add("hidden");
+                    }
+                    
+                    // إعادة ربط مستمعات الأحداث بعد إضافة عنصر جديد
+                    if (isComment) {
+                         newElementDiv.querySelector('.like-comment-btn').addEventListener('click', (e) => handleLike(`/like_comment/${data.comment_id}`, e.currentTarget));
+                         newElementDiv.querySelector('.reply-comment-btn').addEventListener('click', (e) => {
+                             const replyForm = newElementDiv.querySelector('.reply-form');
+                             replyForm.classList.toggle("hidden");
+                             replyForm.querySelector("textarea").focus();
+                         });
+                         newElementDiv.querySelector('.reply-form').addEventListener('submit', (e) => {
+                             e.preventDefault();
+                             handleSubmit(`/reply_comment/${data.comment_id}`, newElementDiv.querySelector('.reply-form'), newElementDiv.querySelector('.replies-container'));
+                         });
+                     }
+                } else {
+                    alert("حدث خطأ أثناء إرسال البيانات.");
+                }
+            } catch (error) {
+                console.error("Error submitting:", error);
+                alert("حدث خطأ في الاتصال بالخادم.");
+            }
+        }
+
+        // --- ربط الأحداث بنماذج الإعجاب والتعليق والردود الموجودة بالفعل عند تحميل الصفحة
+        const postLikeBtn = document.querySelector(".like-btn");
+        if (postLikeBtn) {
+            postLikeBtn.addEventListener("click", () => handleLike(`/like/${postLikeBtn.dataset.postId}`, postLikeBtn));
+        }
+
+        document.querySelectorAll(".like-comment-btn").forEach(btn => {
+            btn.addEventListener("click", () => handleLike(`/like_comment/${btn.dataset.commentId}`, btn));
         });
 
         document.querySelectorAll(".reply-comment-btn").forEach(btn => {
@@ -169,46 +358,21 @@
         });
 
         document.querySelectorAll(".reply-form").forEach(form => {
-            form.addEventListener("submit", async e => {
+            form.addEventListener("submit", (e) => {
                 e.preventDefault();
                 const commentId = form.dataset.commentId;
-                const content = form.content.value;
-                if(!content.trim()) return;
-
-                const response = await fetch(`/reply_comment/${commentId}`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Requested-With": "XMLHttpRequest"
-                    },
-                    body: JSON.stringify({ content })
-                });
-
-                if(response.ok){
-                    const data = await response.json();
-                    const repliesContainer = form.previousElementSibling;
-                    const replyDiv = document.createElement("div");
-                    replyDiv.className = "bg-white/20 p-2 rounded-lg text-sm flex justify-between items-start";
-                    replyDiv.innerHTML = `
-                        <div class="flex items-center gap-2">
-                            <img src="${data.user.profile_pic_url || 'https://tdh.org/images/default-profile-pic.png'}" class="w-7 h-7 rounded-full object-cover" />
-                            <div>
-                                <strong class="font-semibold">${data.user.username}:</strong>
-                                <p class="inline">${data.content}</p>
-                            </div>
-                        </div>
-                        <small class="text-gray-400 text-xs mt-1">${data.timestamp}</small>
-                    `;
-                    repliesContainer.appendChild(replyDiv);
-                    form.content.value = "";
-                    form.classList.add("hidden");
-                } else {
-                    alert("حدث خطأ أثناء إرسال الرد.");
-                }
+                const repliesContainer = form.previousElementSibling;
+                handleSubmit(`/reply_comment/${commentId}`, form, repliesContainer);
             });
         });
+
+        const mainCommentForm = document.getElementById("main-comment-form");
+        mainCommentForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            handleSubmit(`{{ url_for('comment_post', post_id=post.id) }}`, mainCommentForm, null);
+        });
+
     });
     </script>
-
 </body>
 </html>
