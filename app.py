@@ -80,8 +80,24 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
-    # ⚠️ تم التعديل: إضافة backref للمستخدم
+    likes = db.Column(db.Integer, default=0)  # هذا هو العمود
+    
     user = db.relationship("User", backref=db.backref("comments", lazy=True))
+    # لا تضع أي شيء هنا يسبب تضاربًا مع "likes"
+
+class Reply(db.Model):
+    __tablename__ = "replies"
+    id = db.Column(db.Integer, primary_key=True)
+    comment_id = db.Column(db.Integer, db.ForeignKey("comments.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, server_default=db.func.now())
+    
+    # العلاقات
+    # يربط الرد بالتعليق الذي ينتمي إليه
+    comment = db.relationship("Comment", backref=db.backref("replies", lazy=True))
+    # يربط الرد بالمستخدم الذي قام بالرد
+    user = db.relationship("User", backref=db.backref("replies", lazy=True))  
 
 class Like(db.Model):
     __tablename__ = "likes"
@@ -91,6 +107,20 @@ class Like(db.Model):
     __table_args__ = (db.UniqueConstraint('user_id', 'post_id', name='_user_post_uc'),)
     # ⚠️ تم التعديل: إضافة علاقة المستخدم
     user = db.relationship("User", backref=db.backref("likes", lazy=True))
+
+class CommentLike(db.Model):
+    __tablename__ = "comment_likes"
+    id = db.Column(db.Integer, primary_key=True)
+    comment_id = db.Column(db.Integer, db.ForeignKey("comments.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    timestamp = db.Column(db.DateTime, server_default=db.func.now())
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'comment_id', name='_user_comment_uc'),)
+
+    user = db.relationship("User", backref=db.backref("comment_likes", lazy=True))
+    # ✅ قم بتغيير اسم الـ backref لتجنب التضارب
+    comment = db.relationship("Comment", backref=db.backref("likes_rel", lazy=True))
+
 
 class Center(db.Model):
     __tablename__ = "centers"
@@ -435,30 +465,117 @@ def like(post_id):
     db.session.commit()
     
     return jsonify({"success": True, "likes": post.likes, "liked": liked})
-
 @app.route("/comment/<int:post_id>", methods=["POST"])
 @login_required
 def comment_post(post_id):
     if g.user.status != 'approved':
-        flash("⚠️ غير مصرح لك بالتعليق", "danger")
-        return redirect(url_for("view_post", post_id=post_id))
+        # بما أن الطلب يأتي عبر AJAX، يجب إرجاع استجابة JSON وليس إعادة توجيه.
+        return jsonify({"error": "غير مصرح لك بالتعليق"}), 403
 
-    # الحصول على البيانات من الـ form
-    content = request.form.get("content", "").strip()
+    # التعديل هنا: استخدام request.get_json() لقراءة البيانات
+    data = request.get_json()
+    if not data or 'content' not in data:
+        return jsonify({"error": "لا يمكن إضافة تعليق فارغ"}), 400
 
+    content = data['content'].strip()
     if not content:
-        flash("⚠️ لا يمكن إضافة تعليق فارغ", "warning")
-        return redirect(url_for("view_post", post_id=post_id))
-    
+        return jsonify({"error": "لا يمكن إضافة تعليق فارغ"}), 400
+
     post = Post.query.get_or_404(post_id)
     
-    new_comment = Comment(post_id=post_id, user_id=g.user.id, content=content)
-    db.session.add(new_comment)
-    db.session.commit()
+    try:
+        new_comment = Comment(post_id=post_id, user_id=g.user.id, content=content)
+        db.session.add(new_comment)
+        db.session.commit()
+
+        # إرجاع استجابة JSON بالبيانات الجديدة
+        return jsonify({
+            "comment_id": new_comment.id,
+            "content": new_comment.content,
+            "timestamp": new_comment.timestamp.strftime('%Y-%m-%d %H:%M'),
+            "user": {
+                "username": g.user.username,
+                "profile_pic_url": g.user.profile_pic_url
+            }
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Server error: {e}")
+        return jsonify({"error": "حدث خطأ بالخادم"}), 500
 
     flash("✅ تم إضافة تعليقك بنجاح", "success")
     return redirect(url_for("view_post", post_id=post_id))
 # الكود الصحيح الذي يجب أن تستخدمه
+
+# هذا هو كود Python/Flask لمسار الرد على التعليق
+import datetime  # يجب استيراد مكتبة الوقت
+
+@app.route("/reply_comment/<int:comment_id>", methods=["POST"])
+@login_required
+def reply_comment(comment_id):
+    # استخدام request.get_json() لقراءة البيانات من الطلب
+    data = request.get_json()
+    content = data.get("content", "").strip()
+
+    if not content:
+        # إذا كان المحتوى فارغاً، نرجع استجابة خطأ بصيغة JSON
+        return jsonify({"error": "لا يمكن إضافة رد فارغ"}), 400
+
+    comment = Comment.query.get_or_404(comment_id)
+    
+    try:
+        # هنا يتم إنشاء الرد وحفظه في قاعدة البيانات
+        new_reply = Reply(comment_id=comment_id, user_id=g.user.id, content=content)
+        db.session.add(new_reply)
+        db.session.commit()
+        # بعد commit، يصبح المعرف (id) متاحًا
+        
+        # إرجاع استجابة JSON بالبيانات الجديدة
+        return jsonify({
+            "reply_id": new_reply.id,  # استخدام المعرف الحقيقي للرد
+            "content": content,
+            # استخدام الوقت الفعلي. يمكنك تعديل هذا إذا كان لديك حقل timestamp في نموذج الرد
+            "timestamp": datetime.datetime.now().isoformat(), 
+            "user": {
+                "username": g.user.username,
+                "profile_pic_url": g.user.profile_pic_url
+            }
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Server error: {e}")
+        return jsonify({"error": "حدث خطأ بالخادم"}), 500
+
+        # هذا هو المسار الخاص بالإعجاب بالتعليق
+@app.route("/like_comment/<int:comment_id>", methods=["POST"])
+@login_required
+def like_comment(comment_id):
+    # نجد التعليق باستخدام المعرف
+    comment = Comment.query.get_or_404(comment_id)
+    user_id = g.user.id
+
+    # التحقق مما إذا كان المستخدم قد أعجب بالتعليق بالفعل
+    existing_like = CommentLike.query.filter_by(user_id=user_id, comment_id=comment_id).first()
+
+    if existing_like:
+        # إذا كان موجودًا، نحذفه (إلغاء الإعجاب)
+        db.session.delete(existing_like)
+        comment.likes -= 1
+        liked = False
+    else:
+        # إذا لم يكن موجودًا، نضيف إعجابًا جديدًا
+        new_like = CommentLike(user_id=user_id, comment_id=comment_id)
+        db.session.add(new_like)
+        comment.likes += 1
+        liked = True
+
+    db.session.commit()
+    
+    # نرجع استجابة JSON تحتوي على العدد الجديد للإعجابات وحالة الإعجاب
+    return jsonify({"likes": comment.likes, "liked": liked}), 200
+
 @app.route("/view_post/<int:post_id>", methods=["GET", "POST"])
 @login_required
 def view_post(post_id):
