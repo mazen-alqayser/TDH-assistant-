@@ -465,11 +465,10 @@
                                     class="fa-heart {% if post.id in liked_post_ids %}fa-solid liked{% else %}fa-regular not-liked{% endif %} text-lg transition-colors duration-300"></i>
                                 <span class="like-count text-sm">{{ post.likes }}</span>
                             </button>
-                            <button class="comment-btn flex items-center space-x-1 space-x-reverse focus:outline-none"
-                                data-post-id="{{ post.id }}">
-                                <i class="fa-regular fa-comment text-lg"></i>
-                                <span class="comment-count text-sm">{{ post.comments|length }}</span>
-                            </button>
+                        <a href="{{ url_for('view_post', post_id=post.id) }}" class="comments-toggle-btn hover:text-white transition-colors">
+                            <i class="fa-regular fa-comment text-lg"></i>
+                            <span class="comment-count text-sm">{{ post.comments|length }}</span>
+                           </a>
                         </div>
                     </div>
 
