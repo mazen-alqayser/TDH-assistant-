@@ -8,7 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* بداية كتلة التنسيقات المخصصة CSS */
         :root {
+            /* تعريف متغيرات CSS لتسهيل تعديل الألوان والخطوط من مكان واحد. */
             --font-main: 'Cairo', sans-serif;
             --bg-start: #0f172a;
             --bg-end: #3b0764;
@@ -16,81 +18,134 @@
         }
 
         body {
+            /* تنسيقات جسم الصفحة بالكامل. */
             font-family: var(--font-main);
+            /* استخدام الخط الرئيسي المحدد في المتغيرات. */
             color: #fff;
+            /* لون النص الافتراضي هو الأبيض. */
             background: linear-gradient(135deg, var(--bg-start), #1e3a8a, var(--bg-start), var(--bg-end));
+            /* خلفية متدرجة بألوان متعددة. */
             background-size: 400% 400%;
+            /* تحديد حجم الخلفية لتكون أكبر من الشاشة لإفساح المجال للحركة. */
             animation: gradientAnimation 15s ease infinite;
+            /* تطبيق حركة متدرجة لا نهائية على الخلفية. */
             min-height: 100vh;
+            /* جعل ارتفاع الصفحة يملأ الشاشة بالكامل. */
             display: flex;
+            /* استخدام Flexbox لتخطيط المحتوى. */
             flex-direction: column;
+            /* ترتيب العناصر عمودياً. */
         }
 
         @keyframes gradientAnimation {
+            /* تعريف الحركة المتدرجة. */
             0% { background-position: 0% 50%; }
+            /* في بداية الحركة، تكون الخلفية في الموضع الأفقي 0%. */
             50% { background-position: 100% 50%; }
+            /* في منتصف الحركة، تتحرك الخلفية إلى الموضع 100%. */
             100% { background-position: 0% 50%; }
+            /* في نهاية الحركة، تعود الخلفية إلى الموضع الأولي. */
         }
 
         .sidebar {
+            /* تنسيقات الشريط الجانبي. */
             background: rgba(17, 24, 39, 0.7);
+            /* لون خلفية شبه شفاف. */
             backdrop-filter: blur(10px);
+            /* تطبيق تأثير التمويه على ما خلف الشريط الجانبي. */
             border-left: 1px solid rgba(255, 255, 255, 0.1);
+            /* إضافة حدود يسارية شبه شفافة. */
             transition: width 0.3s ease;
+            /* إضافة انتقال سلس على خاصية "width" (لم يتم استخدامها هنا ولكنها مفيدة). */
         }
         .main-content {
+            /* تنسيقات المحتوى الرئيسي. */
             flex-grow: 1;
+            /* جعل هذا القسم يملأ المساحة المتبقية. */
         }
         .card {
+            /* تنسيقات البطاقات التي تحتوي على المحتوى. */
             background: rgba(255, 255, 255, 0.1);
+            /* خلفية شبه شفافة. */
             backdrop-filter: blur(10px);
+            /* تأثير التمويه على الخلفية. */
             border: 1px solid rgba(255, 255, 255, 0.2);
+            /* حدود شفافة. */
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            /* إضافة ظل للبطاقة. */
         }
         .btn-green {
+            /* تنسيقات الأزرار الخضراء. */
             background-color: var(--accent-color);
+            /* استخدام اللون المميز المحدد في المتغيرات. */
             transition: background-color 0.3s, transform 0.3s;
+            /* انتقال سلس على اللون والحجم عند التفاعل. */
         }
         .btn-green:hover {
+            /* تنسيقات الأزرار الخضراء عند تمرير الفأرة فوقها. */
             background-color: #2f855a;
+            /* تغيير لون الخلفية. */
             transform: scale(1.05);
+            /* تكبير بسيط للزر. */
         }
         .btn-red {
+            /* تنسيقات الأزرار الحمراء. */
             background-color: #dc2626;
+            /* لون أحمر. */
             transition: background-color 0.3s, transform 0.3s;
+            /* انتقال سلس على اللون والحجم عند التفاعل. */
         }
         .btn-red:hover {
+            /* تنسيقات الأزرار الحمراء عند تمرير الفأرة فوقها. */
             background-color: #b91c1c;
+            /* تغيير لون الخلفية. */
             transform: scale(1.05);
+            /* تكبير بسيط للزر. */
         }
         .list-item:hover {
+            /* تنسيقات عناصر القائمة عند تمرير الفأرة فوقها. */
             background-color: rgba(255, 255, 255, 0.1);
+            /* تغيير لون الخلفية. */
         }
         .navbar {
+            /* تنسيقات شريط التنقل العلوي. */
             background: rgba(255, 255, 255, 0.1);
+            /* خلفية شبه شفافة. */
             backdrop-filter: blur(12px);
+            /* تأثير التمويه على الخلفية. */
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            /* إضافة ظل. */
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            /* إضافة حد سفلي شبه شفاف. */
         }
         body.light .navbar {
+            /* تنسيقات شريط التنقل في الوضع الفاتح (غير مستخدمة في هذا الكود). */
             background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
         .profile-img {
+            /* تنسيقات صورة الملف الشخصي. */
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            /* جعل الصورة دائرية. */
             object-fit: cover;
+            /* ضمان ملء الصورة للمساحة دون تشويه. */
             border: 2px solid;
+            /* إضافة حدود للصورة. */
             border-color: #d1d5db;
             transition: border-color 0.3s ease;
+            /* انتقال سلس على لون الحدود. */
         }
         .profile-img:hover {
+            /* تنسيقات الصورة عند تمرير الفأرة فوقها. */
             border-color: #9ca3af;
+            /* تغيير لون الحدود. */
         }
         /* تنسيق علامة التوثيق */
         .verified-badge {
+            /* تنسيقات أيقونة التوثيق. */
             color: #34d399; /* لون أخضر فاتح */
             font-size: 1rem;
             margin-right: 4px;
@@ -98,13 +153,12 @@
     </style>
 </head>
 <body class="dark flex flex-col min-h-screen">
-
 <nav class="navbar p-4 flex justify-between items-center shadow-md flex-wrap gap-3 sticky top-0 z-50">
     <div class="flex items-center">
         <a href="{{ url_for('index') }}" class="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 transition-colors">
             <i class="fa-solid fa-home fa-xl text-white"></i>
             <span class="text-white font-bold text-lg select-none hidden md:block">الرئيسية</span>
-        </a>
+            </a>
         <a href="{{ url_for('admin_dashboard') }}" class="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 transition-colors">
             <img src="https://www.tdh.org/themes/custom/tailwinded/images/Logo_Tdh_english.svg" alt="شعار TDH" class="h-10" />
             <span class="text-white font-bold text-2xl select-none hidden md:block">TDH</span>
@@ -115,7 +169,7 @@
         <div class="relative">
             <input type="text" id="searchInput" placeholder="ابحث عن منشورات أو أسماء مستخدمين..." class="w-full pl-10 pr-4 py-2 rounded-full border-2 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors" />
             <i class="fa-solid fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-        </div>
+            </div>
     </div>
 
     <div class="flex items-center gap-4 flex-wrap">
@@ -123,10 +177,10 @@
         <a href="https://www.tdh.org" target="_blank" title="الموقع الرسمي" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-globe fa-lg"></i></a>
         <a href="tel:+201234567890" title="خدمة العملاء" class="text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-phone fa-lg"></i></a>
         {% if is_admin %}
-            <a href="{{ url_for('admin_dashboard') }}" class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">لوحة المشرف</a>
+        <a href="{{ url_for('admin_dashboard') }}" class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">لوحة المشرف</a>
         {% endif %}
         <a href="{{ url_for('logout') }}" class="logout-btn border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-1 rounded-full font-bold transition-all select-none">خروج</a>
-    </div>
+        </div>
 </nav>
 
 <div class="flex flex-grow">
@@ -169,25 +223,25 @@
             <ul class="space-y-4">
                 {% if pending_users %}
                     {% for user in pending_users %}
-                    <li class="list-item flex justify-between items-center p-4 rounded-lg">
-                        <div class="flex items-center gap-4">
-                            <a href="{{ url_for('user_profile', user_id=user.id) }}">
-                                <img src="{{ user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" alt="صورة الملف الشخصي" class="w-12 h-12 rounded-full object-cover">
-                            </a>
-                            <div>
-                                <p class="font-bold text-lg">{{ user.username }}</p>
-                                <p class="text-gray-400">{{ user.email }}</p>
+                        <li class="list-item flex justify-between items-center p-4 rounded-lg">
+                            <div class="flex items-center gap-4">
+                                <a href="{{ url_for('user_profile', user_id=user.id) }}">
+                                    <img src="{{ user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" alt="صورة الملف الشخصي" class="w-12 h-12 rounded-full object-cover">
+                                </a>
+                                <div>
+                                    <p class="font-bold text-lg">{{ user.username }}</p>
+                                    <p class="text-gray-400">{{ user.email }}</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <form action="{{ url_for('approve_user', user_id=user.id) }}" method="POST">
-                                <button type="submit" class="btn-green text-white font-semibold py-2 px-4 rounded-full">قبول</button>
-                            </form>
-                            <form action="{{ url_for('reject_user', user_id=user.id) }}" method="POST">
-                                <button type="submit" class="btn-red text-white font-semibold py-2 px-4 rounded-full">رفض</button>
-                            </form>
-                        </div>
-                    </li>
+                            <div class="flex items-center gap-2">
+                                <form action="{{ url_for('approve_user', user_id=user.id) }}" method="POST">
+                                    <button type="submit" class="btn-green text-white font-semibold py-2 px-4 rounded-full">قبول</button>
+                                </form>
+                                <form action="{{ url_for('reject_user', user_id=user.id) }}" method="POST">
+                                    <button type="submit" class="btn-red text-white font-semibold py-2 px-4 rounded-full">رفض</button>
+                                </form>
+                            </div>
+                        </li>
                     {% endfor %}
                 {% else %}
                     <p class="text-gray-400 text-center py-4">لا توجد طلبات مستخدمين جديدة حاليًا.</p>
@@ -200,37 +254,37 @@
             <ul class="space-y-4">
                 {% if all_posts %}
                     {% for post in all_posts %}
-                    <li class="list-item p-4 rounded-lg">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center gap-3">
-                                <a href="{{ url_for('user_profile', user_id=post.user.id) }}">
-                                    <img src="{{ post.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" alt="صورة المستخدم" class="w-10 h-10 rounded-full object-cover">
-                                </a>
-                                <p class="font-bold flex items-center gap-1">
-                                    {{ post.user.username }}
-                                    {% if post.user.is_admin %}
-                                        <i class="fa-solid fa-check-circle verified-badge" title="حساب موثق"></i>
-                                    {% endif %}
-                                </p>
+                        <li class="list-item p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-3">
+                                    <a href="{{ url_for('user_profile', user_id=post.user.id) }}">
+                                        <img src="{{ post.user.profile_pic_url or 'https://tdh.org/images/default-profile-pic.png' }}" alt="صورة المستخدم" class="w-10 h-10 rounded-full object-cover">
+                                    </a>
+                                    <p class="font-bold flex items-center gap-1">
+                                        {{ post.user.username }}
+                                        {% if post.user.is_admin %}
+                                            <i class="fa-solid fa-check-circle verified-badge" title="حساب موثق"></i>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <p class="text-gray-400 text-sm">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
                             </div>
-                            <p class="text-gray-400 text-sm">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
-                        </div>
-                        <div class="text-gray-200 mb-4 whitespace-pre-wrap">{{ post.content }}</div>
-                        {% if post.image_url %}
-                            <img src="{{ post.image_url }}" alt="صورة المنشور" class="w-full h-auto rounded-lg my-4">
-                        {% endif %}
-                        <div class="flex flex-col gap-2">
-                            <form action="{{ url_for('admin_reply_post', post_id=post.id) }}" method="POST" class="flex gap-2">
-                                <textarea name="reply_content" placeholder="اكتب ردك هنا..." rows="2" class="flex-grow p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required></textarea>
-                                <button type="submit" class="btn-green text-white font-bold py-2 px-4 rounded-lg">رد</button>
-                            </form>
-                            <div class="flex justify-end gap-2">
-                                <form action="{{ url_for('admin_delete_post', post_id=post.id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا المنشور؟');">
-                                    <button type="submit" class="btn-red text-white font-semibold py-1 px-3 rounded-full">حذف</button>
+                            <div class="text-gray-200 mb-4 whitespace-pre-wrap">{{ post.content }}</div>
+                            {% if post.image_url %}
+                                <img src="{{ post.image_url }}" alt="صورة المنشور" class="w-full h-auto rounded-lg my-4">
+                            {% endif %}
+                            <div class="flex flex-col gap-2">
+                                <form action="{{ url_for('admin_reply_post', post_id=post.id) }}" method="POST" class="flex gap-2">
+                                    <textarea name="reply_content" placeholder="اكتب ردك هنا..." rows="2" class="flex-grow p-3 rounded-lg bg-gray-800/50 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required></textarea>
+                                    <button type="submit" class="btn-green text-white font-bold py-2 px-4 rounded-lg">رد</button>
                                 </form>
+                                <div class="flex justify-end gap-2">
+                                    <form action="{{ url_for('admin_delete_post', post_id=post.id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا المنشور؟');">
+                                        <button type="submit" class="btn-red text-white font-semibold py-1 px-3 rounded-full">حذف</button>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    </li>
+                        </li>
                     {% endfor %}
                 {% else %}
                     <p class="text-gray-400 text-center py-4">لا توجد منشورات متاحة حاليًا.</p>
@@ -259,36 +313,54 @@
 </div>
 
 <script>
+    /* بداية كود JavaScript. */
     document.addEventListener('DOMContentLoaded', () => {
+        /* عند تحميل الصفحة بالكامل، يتم تنفيذ هذا الكود. */
         const searchInput = document.getElementById('searchInput');
+        /* الحصول على عنصر حقل البحث. */
         const fileInput = document.getElementById('announcement_image');
+        /* الحصول على عنصر حقل رفع الصورة. */
         const fileNameSpan = document.getElementById('file-name');
+        /* الحصول على عنصر النص الذي يعرض اسم الملف. */
 
         searchInput.addEventListener('input', (e) => {
+            /* إضافة مستمع حدث لحقل البحث. يتم تشغيله في كل مرة يكتب فيها المستخدم. */
             const searchTerm = e.target.value.toLowerCase();
+            /* الحصول على نص البحث وتحويله إلى أحرف صغيرة. */
             const sections = document.querySelectorAll('#posts-section .list-item, #users-section .list-item');
+            /* الحصول على جميع عناصر القائمة في قسمي المستخدمين والمنشورات. */
 
             sections.forEach(item => {
+                /* المرور على كل عنصر من عناصر القائمة. */
                 const userText = item.querySelector('.font-bold').textContent.toLowerCase();
+                /* الحصول على اسم المستخدم. */
                 let postText = '';
                 const postContentEl = item.querySelector('.text-gray-200');
                 if (postContentEl) {
                     postText = postContentEl.textContent.toLowerCase();
                 }
+                /* الحصول على محتوى المنشور. */
 
                 if (userText.includes(searchTerm) || postText.includes(searchTerm)) {
+                    /* إذا كان نص البحث موجوداً في اسم المستخدم أو محتوى المنشور، اجعل العنصر مرئياً. */
                     item.style.display = '';
                 } else {
+                    /* وإلا، قم بإخفاء العنصر. */
                     item.style.display = 'none';
                 }
             });
         });
 
         fileInput.addEventListener('change', (e) => {
+            /* إضافة مستمع حدث لحقل رفع الصورة، يتم تشغيله عند اختيار ملف. */
             if (e.target.files.length > 0) {
+                /* إذا تم اختيار ملف. */
                 fileNameSpan.textContent = e.target.files[0].name;
+                /* قم بتغيير النص ليعرض اسم الملف. */
             } else {
+                /* إذا لم يتم اختيار أي ملف. */
                 fileNameSpan.textContent = 'لم يتم اختيار ملف';
+                /* أعد النص إلى الحالة الافتراضية. */
             }
         });
     });
