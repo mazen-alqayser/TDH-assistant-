@@ -211,6 +211,7 @@ def intro():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    # إذا كان المستخدم مسجلاً بالفعل، أعد توجيهه إلى الصفحة الرئيسية
     if g.user:
         return redirect(url_for("index"))
 
@@ -220,6 +221,7 @@ def register():
         confirm = request.form.get("confirm")
         email = request.form.get("email")
         
+        # التحقق من تطابق كلمات المرور ووجود اسم المستخدم
         if password != confirm:
             flash("كلمتا المرور غير متطابقتين", "warning")
             return redirect(url_for("register"))
@@ -227,15 +229,22 @@ def register():
             flash("اسم المستخدم موجود بالفعل", "warning")
             return redirect(url_for("register"))
         
+        # إنشاء المستخدم الجديد
         hashed_password = generate_password_hash(password)
         user = User(username=username, email=email, password=hashed_password, status='pending')
         db.session.add(user)
         db.session.commit()
         
+        # ⚠️ الحل: سجل دخول المستخدم الجديد تلقائياً
+        session['user_id'] = user.id
+        session['is_admin'] = user.is_admin # هذا سيظل False للمستخدم العادي
+        
         flash("تم تسجيل حسابك بنجاح. سيتم مراجعته قريباً.", "success")
         
-        # ⚠️ تم التعديل: لا تسجل الدخول تلقائياً، بل أرسل المستخدم إلى صفحة تسجيل الدخول ليعرف أنه يحتاج للموافقة
-        return redirect(url_for('login'))
+        # أعد توجيه المستخدم مباشرة إلى صفحة الانتظار
+        return redirect(url_for('pending_approval'))
+        
+    # إذا كان الطلب GET، اعرض صفحة التسجيل
     return render_template("register.html")
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -277,12 +286,18 @@ def logout():
     return redirect(url_for("login"))
 
 @app.route("/pending_approval")
-@login_required
 def pending_approval():
-    if g.user.status == 'approved' and not g.is_admin:
+    # التحقق من وجود المستخدم في الجلسة
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+        
+    user = User.query.get(session['user_id'])
+    
+    # إذا كان المستخدم غير موجود أو حالته approved أو هو admin، قم بتوجيهه
+    if not user or user.status == 'approved' or user.is_admin:
         return redirect(url_for('index'))
-    if g.is_admin:
-        return redirect(url_for('admin_dashboard'))
+        
+    # إذا كانت حالة المستخدم 'pending'، قم بعرض الصفحة
     return render_template("pending_approval.html")
 
 @app.route("/admin")
