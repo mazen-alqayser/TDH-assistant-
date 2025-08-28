@@ -1,100 +1,232 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>بانتظار الموافقة</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>بانتظار الموافقة</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@700;900&display=swap" rel="stylesheet" />
 
-<style>
-:root {
-	--font-main: 'Cairo', sans-serif;
-	--font-alt: 'Amiri', serif;
-}
-body, html {
-	height: 100%; margin: 0; font-family: var(--font-main); overflow: hidden;
-	background: linear-gradient(-45deg, #ffc107, #ff9800, #3498db, #8e44ad);
-	background-size: 400% 400%;
-	animation: bgMove 15s ease infinite;
-}
-@keyframes bgMove {
-	0% { background-position: 0% 50%; }
-	50% { background-position: 100% 50%; }
-	100% { background-position: 0% 50%; }
-}
-.screen {
-	position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;
-	text-align: center; color: white; padding: 2rem;
-}
-.glass-box {
-	background: rgba(255,255,255,0.15);
-	padding: 2rem 3rem;
-	border-radius: 20px;
-	backdrop-filter: blur(12px);
-	box-shadow: 0 0 30px rgba(0,0,0,0.3);
-}
-.title {
-	font-weight: 900;
-	font-size: clamp(2.5rem, 8vw, 4rem);
-	animation: fadeInUp 0.9s forwards;
-	color: #ffffff; /* لون أبيض ليتناسب مع الخلفية */
-}
-.subtitle {
-	font-weight: 600;
-	font-size: clamp(1.5rem, 5vw, 2.2rem);
-	margin-bottom: 1.5rem;
-	animation: fadeInUp 0.9s forwards 0.3s;
-}
-.message-text {
-	font-size: clamp(1.2rem, 4vw, 1.6rem);
-	margin-top: 1rem;
-	animation: fadeInUp 0.9s forwards 0.6s;
-}
-@keyframes fadeInUp {
-	from { opacity: 0; transform: translateY(30px) scale(0.95); }
-	to { opacity: 1; transform: translateY(0) scale(1); }
-}
-.logout-btn {
-	padding: 1rem 3rem; font-size: 1.3rem; font-weight: 700; color: white;
-	background: linear-gradient(90deg, #ffc107, #ff9800);
-	border: none; border-radius: 50px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 1rem;
-	box-shadow: 0 0 20px rgba(255, 193, 7, 0.8);
-	transition: transform 0.3s, box-shadow 0.3s;
-	background-size: 200% 200%;
-	animation: btnAnim 4s ease infinite, fadeInUp 0.9s forwards 0.9s;
-	text-decoration: none; /* لإزالة خط الرابط */
-}
-.logout-btn:hover {
-	transform: scale(1.07);
-	box-shadow: 0 0 40px rgba(255, 193, 7, 1);
-}
-@keyframes btnAnim {
-	0% { background-position: 0% 50%; }
-	50% { background-position: 100% 50%; }
-	100% { background-position: 0% 50%; }
-}
-</style>
+    <style>
+        :root {
+            --font-main: 'Cairo', sans-serif;
+            --font-alt: 'Amiri', serif;
+        }
+
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: var(--font-main);
+            overflow: hidden;
+            background: linear-gradient(-45deg, #1a2a51, #0a1128, #4b0082, #7f00ff);
+            background-size: 400% 400%;
+            animation: bgMove 15s ease infinite;
+        }
+
+        @keyframes bgMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .glass-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+
+        #messages-container {
+            position: relative;
+            min-height: 240px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .message {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .message.visible {
+            opacity: 1;
+            animation: fadeInUp 0.9s forwards;
+        }
+
+        .title {
+            font-weight: 900;
+            font-size: clamp(1.6rem, 5vw, 2.5rem);
+            color: #ffffff;
+        }
+
+        .message-text {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            margin-top: 1rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            padding: 0.8rem 1.8rem;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            box-shadow: 0 0 20px rgba(106, 17, 203, 0.8);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.07);
+            box-shadow: 0 0 40px rgba(106, 17, 203, 1);
+        }
+
+        @media (max-width: 768px) {
+            .glass-box {
+                padding: 2.5rem 1.5rem;
+                width: 95%;
+            }
+
+            .back-btn {
+                top: 20px;
+                left: 20px;
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
+
 <body>
+    <div class="screen">
+        <div class="glass-box">
+            <div id="messages-container">
+                <div class="message visible" data-lang="ar">
+                    <h1 class="title">حسابك قيد المراجعة</h1>
+                    <p class="message-text">
+                        شكراً لتسجيلك، تم استلام طلبك.
+                    </p>
+                    <p class="message-text">
+                        سيتم إعلامك عبر البريد الإلكتروني فور الموافقة عليه.
+                    </p>
+                </div>
+                <div class="message" data-lang="en">
+                    <h1 class="title">Account Under Review</h1>
+                    <p class="message-text">
+                        Thank you for registering. Your request has been received.
+                    </p>
+                    <p class="message-text">
+                        You will be notified via email once your account is approved.
+                    </p>
+                </div>
+                <div class="message" data-lang="ti">
+                    <h1 class="title">ናይ መዝገብኩም ምሕታት ኣብ ምምርማር ይርከብ</h1>
+                    <p class="message-text">
+                        ንምምዝጋብኩም የቐንየልና። ሕቶኹም ተቐቢልናዮ ኣለና።
+                    </p>
+                    <p class="message-text">
+                        መዝገብኩም ምስ ጸደቐ ብኢመይል ክንሕብረኩም ኢና።
+                    </p>
+                </div>
+                <div class="message" data-lang="am">
+                    <h1 class="title">መለያዎ በግምገማ ላይ ነው</h1>
+                    <p class="message-text">
+                        ስለተመዘገቡ እናመሰግናለን። ጥያቄዎ ተቀብሏል።
+                    </p>
+                    <p class="message-text">
+                        መለያዎ ሲፀድق በኢሜል ይነገርዎታል።
+                    </p>
+                </div>
+                <div class="message" data-lang="de">
+                    <h1 class="title">Konto wird überprüft</h1>
+                    <p class="message-text">
+                        Vielen Dank für Ihre Registrierung. Ihre Anfrage wurde empfangen.
+                    </p>
+                    <p class="message-text">
+                        Sie werden per E-Mail benachrichtigt, sobald Ihr Konto genehmigt wurde.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="screen">
-    <div class="glass-box">
-        <h1 class="title">حسابك قيد المراجعة</h1>
-        <p class="message-text">
-            شكراً لتسجيلك، تم استلام طلبك.
-        </p>
-        <p class="message-text" style="animation-delay: 0.7s;">
-            سيتم إعلامك عبر البريد الإلكتروني فور الموافقة عليه.
-        </p>
-        
-        <a href="{{ url_for('logout') }}" class="logout-btn">
-            <i class="fa-solid fa-right-from-bracket"></i>
-            تسجيل الخروج
-        </a>
-    </div>
-</div>
+    <script>
+        const messagesContainer = document.getElementById('messages-container');
+        const messages = messagesContainer.querySelectorAll('.message');
+        
+        let currentIndex = 0;
 
+        function switchLanguage() {
+            messages.forEach(msg => msg.classList.remove('visible'));
+            messages[currentIndex].classList.add('visible');
+            currentIndex = (currentIndex + 1) % messages.length;
+        }
+
+        setInterval(switchLanguage, 2000);
+
+        // هذا هو الكود الجديد الذي يحل المشكلة
+        setTimeout(function() {
+            window.location.href = "{{ url_for('logout') }}";
+        }, 10000); // 10 ثوانٍ (10000 مللي ثانية)
+    </script>
 </body>
+
 </html>
